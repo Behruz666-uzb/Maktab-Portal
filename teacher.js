@@ -25,19 +25,40 @@ function loadTeacherData() {
     const subjectName = getSubjectName(user.subject);
     const subjectTitle = subjectName.charAt(0).toUpperCase() + subjectName.slice(1);
 
-    // Profil ma'lumotlari
+    // Profil ma'lumotlari (Inputs)
     document.getElementById('profileName').value = user.name;
     document.getElementById('profileUsername').value = user.username;
     document.getElementById('profileClass').value = getClassName(user.class);
     document.getElementById('profileSubject').value = getSubjectName(user.subject);
-    document.getElementById('profileCoins').value = user.coins;
+    // Sync All Profile UI Elements
+    const coinBalance = user.coins || 0;
+    const elements = {
+        navCoins: document.getElementById('coinBalance'),
+        statsCoins: document.getElementById('coinBalanceCard'),
+        profileHeaderCoins: document.getElementById('profileHeaderCoins'),
+        profileInputCoins: document.getElementById('profileCoins'),
+        profileHeaderName: document.getElementById('profileHeaderName'),
+        profileHeaderSubject: document.getElementById('profileHeaderSubject'),
+        profileHeaderClass: document.getElementById('profileHeaderClass')
+    };
+
+    if (elements.navCoins) elements.navCoins.textContent = coinBalance;
+    if (elements.statsCoins) elements.statsCoins.textContent = coinBalance;
+    if (elements.profileHeaderCoins) elements.profileHeaderCoins.textContent = coinBalance;
+    if (elements.profileInputCoins) elements.profileInputCoins.value = coinBalance;
+
+    if (elements.profileHeaderName) elements.profileHeaderName.textContent = user.name;
+    if (elements.profileHeaderSubject) elements.profileHeaderSubject.textContent = getSubjectName(user.subject);
+    if (elements.profileHeaderClass) elements.profileHeaderClass.textContent = getClassName(user.class);
 
     if (user.avatar) {
         document.getElementById('userAvatar').src = user.avatar;
         document.getElementById('profileAvatar').src = user.avatar;
+        document.getElementById('userAvatar').style.display = 'block';
+        document.getElementById('profileAvatar').style.display = 'block';
     } else {
         document.getElementById('userAvatar').style.display = 'none';
-        document.getElementById('profileAvatar').style.display = 'none';
+        document.getElementById('profileAvatar').src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) + '&background=0D8ABC&color=fff';
     }
 
     calculateTeacherStats();
@@ -62,6 +83,9 @@ function calculateTeacherStats() {
     const avgAttendance = attendanceCount > 0 ? Math.round(totalAttendance / attendanceCount) : 0;
     document.getElementById('avgAttendance').textContent = avgAttendance + '%';
 
+    const profileAvgAttendance = document.getElementById('profileAvgAttendance');
+    if (profileAvgAttendance) profileAvgAttendance.textContent = avgAttendance + '%';
+
     // O'rtacha baho
     let totalGrade = 0;
     let gradeCount = 0;
@@ -78,6 +102,9 @@ function calculateTeacherStats() {
     });
     const avgGrade = gradeCount > 0 ? (totalGrade / gradeCount).toFixed(1) : '0';
     document.getElementById('avgGrade').textContent = avgGrade;
+
+    const profileAvgGrade = document.getElementById('profileAvgGrade');
+    if (profileAvgGrade) profileAvgGrade.textContent = avgGrade;
 }
 
 function getClassStudents(classId) {
@@ -296,9 +323,9 @@ function loadClassesForGrading(mainClass) {
     }
 
     // Populate Grid Class Selector
-    classSelect.innerHTML = '<option value="">Sinfni tanlang...</option>';
+    classSelect.innerHTML = '<option value="" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white py-2">Sinfni tanlang...</option>';
     predefinedClasses.forEach(cls => {
-        classSelect.innerHTML += `<option value="${cls}">${cls}</option>`;
+        classSelect.innerHTML += `<option value="${cls}" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white py-2">${cls}</option>`;
     });
 }
 
@@ -310,9 +337,9 @@ function loadJournalFilters(mainClass) {
         predefinedClasses.unshift(teacherClassName);
     }
 
-    filterClassSelect.innerHTML = '<option value="all">Barcha Sinflar</option>';
+    filterClassSelect.innerHTML = '<option value="all" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white py-2">Barcha Sinflar</option>';
     predefinedClasses.forEach(cls => {
-        filterClassSelect.innerHTML += `<option value="${cls}">${cls}</option>`;
+        filterClassSelect.innerHTML += `<option value="${cls}" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white py-2">${cls}</option>`;
     });
 }
 
@@ -721,17 +748,69 @@ function filterJournal() {
 }
 
 function loadHomework() {
-    const homework = JSON.parse(localStorage.getItem('homework')) || [];
+    const user = getCurrentUser();
+    let homework = JSON.parse(localStorage.getItem('homework')) || [];
+
+    // Check if THIS teacher has any homework
     const classHomework = homework.filter(h => h.class === user.class && h.createdBy === user.id);
+
+    // If this teacher has no homework, add some sample ones
+    if (classHomework.length === 0) {
+        const samples = [
+            {
+                id: Date.now() + 1,
+                title: 'Uyga vazifa #1',
+                subject: user.subject,
+                class: user.class,
+                description: 'Mavzu bo\'yicha topshiriqlarni bajaring va natijani yuklang.',
+                deadline: new Date(Date.now() + 86400000).toISOString(),
+                completed: 12,
+                totalStudents: 25,
+                createdBy: user.id
+            },
+            {
+                id: Date.now() + 2,
+                title: 'Amaliy mashg\'ulot',
+                subject: user.subject,
+                class: user.class,
+                description: 'Darsda o\'tilgan mavzuni mustahkamlash uchun misollar.',
+                deadline: new Date(Date.now() + 172800000).toISOString(),
+                completed: 5,
+                totalStudents: 25,
+                createdBy: user.id
+            },
+            {
+                id: Date.now() + 3,
+                title: 'Mustaqil ish',
+                subject: user.subject,
+                class: user.class,
+                description: 'Loyihani tugatib, hisobotni topshiring.',
+                deadline: new Date(Date.now() + 259200000).toISOString(),
+                completed: 0,
+                totalStudents: 25,
+                createdBy: user.id
+            }
+        ];
+
+        homework = [...homework, ...samples];
+        localStorage.setItem('homework', JSON.stringify(homework));
+        refreshData();
+
+        // Re-filter after adding samples
+        var finalHomework = homework.filter(h => h.class === user.class && h.createdBy === user.id);
+    } else {
+        var finalHomework = classHomework;
+    }
+
     const container = document.getElementById('homeworkList');
     container.innerHTML = '';
 
-    if (classHomework.length === 0) {
+    if (finalHomework.length === 0) {
         container.innerHTML = '<p class="text-gray-400 text-center py-4">Hozircha uy vazifalari mavjud emas</p>';
         return;
     }
 
-    classHomework.forEach(hw => {
+    finalHomework.forEach(hw => {
         const homeworkCard = `
             <div class="bg-card border border-themed rounded-lg p-6 shadow-sm card-hover">
                 <div class="flex justify-between items-start mb-4">
@@ -761,18 +840,68 @@ function loadHomework() {
 }
 
 function loadTests() {
-    const tests = JSON.parse(localStorage.getItem('tests')) || [];
+    let tests = JSON.parse(localStorage.getItem('tests')) || [];
     const user = getCurrentUser();
     const teacherTests = tests.filter(t => t.createdBy === user.id);
     const container = document.getElementById('testsList');
     container.innerHTML = '';
 
+    // If this teacher has no tests, add some sample ones
     if (teacherTests.length === 0) {
+        const samples = [
+            {
+                id: Date.now() + 10,
+                title: 'Matematika: Kirish testi',
+                subject: user.subject,
+                questions: [
+                    {
+                        question: '2 + 2 * 2 = ?',
+                        options: ['4', '6', '8', '10'],
+                        correct: 1,
+                        coins: 10
+                    },
+                    {
+                        question: 'Qaysi son tub son emas?',
+                        options: ['2', '3', '4', '5'],
+                        correct: 2,
+                        coins: 15
+                    }
+                ],
+                createdBy: user.id,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: Date.now() + 20,
+                title: 'Mantiqiy savollar',
+                subject: user.subject,
+                questions: [
+                    {
+                        question: 'Dushanbadan keyin qaysi kun keladi?',
+                        options: ['Chorshanba', 'Seshanba', 'Payshanba', 'Juma'],
+                        correct: 1,
+                        coins: 5
+                    }
+                ],
+                createdBy: user.id,
+                createdAt: new Date().toISOString()
+            }
+        ];
+
+        tests = [...tests, ...samples];
+        localStorage.setItem('tests', JSON.stringify(tests));
+        refreshData();
+        // Re-filter after adding samples
+        var finalTests = tests.filter(t => t.createdBy === user.id);
+    } else {
+        var finalTests = teacherTests;
+    }
+
+    if (finalTests.length === 0) {
         container.innerHTML = '<p class="text-gray-400 text-center py-4">Hozircha testlar mavjud emas</p>';
         return;
     }
 
-    teacherTests.forEach(test => {
+    finalTests.forEach(test => {
         const testCard = `
             <div class="bg-card border border-themed rounded-lg p-6 shadow-sm card-hover">
                 <div class="flex justify-between items-start mb-4">
@@ -819,6 +948,13 @@ function getSubjectName(subjectCode) {
 function loadVideoLessons() {
     const videoLessons = JSON.parse(localStorage.getItem('videoLessons')) || [];
     const user = getCurrentUser();
+
+    // Set Subject in form
+    const subjectDisplay = document.getElementById('lessonSubjectDisplay');
+    if (subjectDisplay) {
+        subjectDisplay.value = getSubjectName(user.subject);
+    }
+
     const activeLesson = videoLessons.find(v => v.teacherId === user.id && v.isActive);
 
     if (activeLesson) {
@@ -827,15 +963,75 @@ function loadVideoLessons() {
         document.getElementById('currentLessonInfo').classList.remove('hidden');
         document.getElementById('lessonTitle').textContent = activeLesson.title;
         document.getElementById('lessonSubject').textContent = getSubjectName(activeLesson.subject);
+
+        // Fill details
+        document.getElementById('currentDate').textContent = new Date(activeLesson.startTime).toLocaleDateString();
+        document.getElementById('currentTime').textContent = new Date(activeLesson.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('teacherName').textContent = user.name;
+        document.getElementById('teacherClassInfo').textContent = getClassName(user.class);
     } else {
         document.getElementById('currentLessonInfo').classList.add('hidden');
+        currentVideoLesson = null;
     }
+
+    renderVideoHistory();
+}
+
+function renderVideoHistory() {
+    const videoLessons = JSON.parse(localStorage.getItem('videoLessons')) || [];
+    const user = getCurrentUser();
+    const historyContainer = document.getElementById('videoHistoryList');
+    const lessonCountText = document.getElementById('lessonCountText');
+
+    // Filter history (inactive lessons for this teacher)
+    const history = videoLessons.filter(v => v.teacherId === user.id && !v.isActive)
+        .sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+
+    lessonCountText.textContent = `${history.length} ta dars`;
+
+    if (history.length === 0) {
+        historyContainer.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-12 text-center bg-gray-50/50 dark:bg-blue-900/5 rounded-2xl border-2 border-dashed border-gray-200 dark:border-blue-900/20">
+                <div class="text-4xl mb-3">🎬</div>
+                <p class="text-gray-500">Hozircha darslar tarixi mavjud emas</p>
+            </div>
+        `;
+        return;
+    }
+
+    historyContainer.innerHTML = '';
+    history.forEach(lesson => {
+        const date = new Date(lesson.startTime);
+        const duration = lesson.endTime ? Math.round((new Date(lesson.endTime) - date) / 60000) : '?';
+
+        const historyItem = `
+            <div class="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-blue-900/30 rounded-xl p-4 hover:shadow-md transition-all group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400">
+                            <i class="fas fa-play-circle text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-white group-hover:text-blue-600 transition-colors">${lesson.title}</h4>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                                <span><i class="far fa-calendar-alt mr-1"></i>${date.toLocaleDateString()}</span>
+                                <span><i class="far fa-clock mr-1"></i>${duration} daqiqa</span>
+                                <span><i class="fas fa-users mr-1"></i>${getClassName(lesson.class)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        historyContainer.innerHTML += historyItem;
+    });
 }
 
 function startVideoLesson() {
     const user = getCurrentUser();
-    const title = document.getElementById('lessonTitleInput').value;
-    const subject = document.getElementById('lessonSubject').value;
+    const titleInput = document.getElementById('lessonTitleInput');
+    const title = titleInput.value;
+    const subject = user.subject;
 
     if (!title) {
         showNotification('Dars sarlavhasini kiriting!', 'error');
@@ -848,12 +1044,13 @@ function startVideoLesson() {
     videoLessons.forEach(lesson => {
         if (lesson.teacherId === user.id) {
             lesson.isActive = false;
+            if (!lesson.endTime) lesson.endTime = new Date().toISOString();
         }
     });
 
     // Yangi video dars yaratish
     const lessonId = Date.now();
-    const meetLink = `https://meet.jit.si/Maktab-${user.class}-${lessonId}`;
+    const meetLink = `https://meet.jit.si/Maktab-${user.class.replace(/\s+/g, '-')}-${lessonId}`;
 
     const newLesson = {
         id: lessonId,
@@ -870,18 +1067,20 @@ function startVideoLesson() {
 
     videoLessons.push(newLesson);
     localStorage.setItem('videoLessons', JSON.stringify(videoLessons));
+    refreshData();
 
     currentVideoLesson = newLesson;
-    document.getElementById('meetLink').value = meetLink;
-    document.getElementById('currentLessonInfo').classList.remove('hidden');
-    document.getElementById('lessonTitle').textContent = title;
-    document.getElementById('lessonSubject').textContent = getSubjectName(subject);
+
+    // Clear input
+    titleInput.value = '';
 
     showNotification('Video dars muvaffaqiyatli boshlandi!', 'success');
+    loadVideoLessons();
 }
 
 function stopVideoLesson() {
     if (!currentVideoLesson) return;
+    if (!confirm('Darsni yakunlashni xohlaysizmi?')) return;
 
     const videoLessons = JSON.parse(localStorage.getItem('videoLessons')) || [];
     const lessonIndex = videoLessons.findIndex(v => v.id === currentVideoLesson.id);
@@ -890,13 +1089,11 @@ function stopVideoLesson() {
         videoLessons[lessonIndex].isActive = false;
         videoLessons[lessonIndex].endTime = new Date().toISOString();
         localStorage.setItem('videoLessons', JSON.stringify(videoLessons));
+        refreshData();
     }
 
-    currentVideoLesson = null;
-    document.getElementById('currentLessonInfo').classList.add('hidden');
-    document.getElementById('lessonTitleInput').value = '';
-
     showNotification('Video dars yakunlandi!', 'success');
+    loadVideoLessons();
 }
 
 function copyMeetLink() {
@@ -939,6 +1136,7 @@ document.getElementById('addStudentForm').addEventListener('submit', function (e
 
     users.push(newStudent);
     localStorage.setItem('users', JSON.stringify(users));
+    refreshData();
 
     showNotification('O\'quvchi muvaffaqiyatli qo\'shildi!', 'success');
     closeModal('addStudentModal');
@@ -972,6 +1170,7 @@ document.getElementById('addHomeworkForm').addEventListener('submit', function (
 
     homework.push(newHomework);
     localStorage.setItem('homework', JSON.stringify(homework));
+    refreshData();
 
     showNotification('Uy vazifasi muvaffaqiyatli yaratildi!', 'success');
     closeModal('addHomeworkModal');
@@ -979,12 +1178,12 @@ document.getElementById('addHomeworkForm').addEventListener('submit', function (
     this.reset();
 });
 
-function addQuestion() {
-    const questionId = Date.now();
+function addQuestion(data = null) {
+    const questionId = data ? data.id || Date.now() : Date.now();
     const questionHtml = `
         <div class="bg-secondary-themed border border-themed rounded-lg p-4 question-item" data-id="${questionId}">
             <div class="flex justify-between items-center mb-4">
-                <h4 class="font-semibold">Yangi Savol</h4>
+                <h4 class="font-semibold">Savol</h4>
                 <button type="button" onclick="removeQuestion(${questionId})" 
                         class="bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-sm transition-colors text-white">
                     ✕
@@ -995,48 +1194,61 @@ function addQuestion() {
                     <label class="block text-sm text-gray-500 dark:text-gray-300 mb-2">Savol Matni</label>
                     <input type="text" 
                            class="w-full bg-themed-hover border border-themed rounded-lg px-3 py-2 text-main question-text"
-                           placeholder="Savolni kiriting" required>
+                           placeholder="Savolni kiriting" required value="${data ? data.question : ''}">
                 </div>
                 <div>
                     <label class="block text-sm text-gray-500 dark:text-gray-300 mb-2">Variantlar</label>
                     <div class="space-y-2 options-container">
-                        <div class="flex items-center space-x-2">
-                            <input type="radio" name="correct-${questionId}" value="0" class="correct-answer">
-                            <input type="text" 
-                                   class="flex-1 bg-themed-hover border border-themed rounded-lg px-3 py-2 text-main option-text"
-                                   placeholder="Variant A" required>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <input type="radio" name="correct-${questionId}" value="1" class="correct-answer">
-                            <input type="text" 
-                                   class="flex-1 bg-themed-hover border border-themed rounded-lg px-3 py-2 text-main option-text"
-                                   placeholder="Variant B" required>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <input type="radio" name="correct-${questionId}" value="2" class="correct-answer">
-                            <input type="text" 
-                                   class="flex-1 bg-themed-hover border border-themed rounded-lg px-3 py-2 text-main option-text"
-                                   placeholder="Variant C" required>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <input type="radio" name="correct-${questionId}" value="3" class="correct-answer">
-                            <input type="text" 
-                                   class="flex-1 bg-themed-hover border border-themed rounded-lg px-3 py-2 text-main option-text"
-                                   placeholder="Variant D" required>
-                        </div>
+                        ${[0, 1, 2, 3].map(i => `
+                            <div class="flex items-center space-x-2">
+                                <input type="radio" name="correct-${questionId}" value="${i}" class="correct-answer" 
+                                    ${data && data.correct === i ? 'checked' : (i === 0 && !data ? 'checked' : '')}>
+                                <input type="text" 
+                                       class="flex-1 bg-themed-hover border border-themed rounded-lg px-3 py-2 text-main option-text"
+                                       placeholder="Variant ${String.fromCharCode(65 + i)}" required value="${data ? data.options[i] : ''}">
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm text-gray-500 dark:text-gray-300 mb-2">Coin (5-20)</label>
-                    <input type="number" min="5" max="20" value="10"
+                    <input type="number" min="5" max="20" value="${data ? data.coins : 10}"
                            class="w-24 bg-themed-hover border border-themed rounded-lg px-3 py-2 text-main question-coins">
                 </div>
             </div>
         </div>
     `;
 
-
     document.getElementById('testQuestionsContainer').insertAdjacentHTML('beforeend', questionHtml);
+}
+
+function editTest(testId) {
+    const tests = JSON.parse(localStorage.getItem('tests')) || [];
+    const test = tests.find(t => t.id === testId);
+
+    if (!test) return;
+
+    // Reset and prepare modal
+    resetTestModal();
+    document.getElementById('testModalTitle').textContent = 'Testni Tahrirlash';
+    document.getElementById('editingTestId').value = testId;
+
+    document.getElementById('testTitle').value = test.title;
+    document.getElementById('testSubject').value = test.subject;
+
+    // Add questions
+    test.questions.forEach(q => {
+        addQuestion(q);
+    });
+
+    openModal('createTestModal');
+}
+
+function resetTestModal() {
+    document.getElementById('testModalTitle').textContent = 'Yangi Test Yaratish';
+    document.getElementById('editingTestId').value = '';
+    document.getElementById('createTestForm').reset();
+    document.getElementById('testQuestionsContainer').innerHTML = '';
 }
 
 function removeQuestion(questionId) {
@@ -1088,19 +1300,36 @@ document.getElementById('createTestForm').addEventListener('submit', function (e
 
     // Testni saqlash
     const tests = JSON.parse(localStorage.getItem('tests')) || [];
-    const newTest = {
-        id: Date.now(),
-        title,
-        subject,
-        questions,
-        createdBy: user.id,
-        createdAt: new Date().toISOString()
-    };
+    const editingId = document.getElementById('editingTestId').value;
 
-    tests.push(newTest);
+    if (editingId) {
+        const index = tests.findIndex(t => t.id === parseInt(editingId));
+        if (index !== -1) {
+            tests[index] = {
+                ...tests[index],
+                title,
+                subject,
+                questions,
+                updatedAt: new Date().toISOString()
+            };
+            showNotification('Test muvaffaqiyatli yangilandi!', 'success');
+        }
+    } else {
+        const newTest = {
+            id: Date.now(),
+            title,
+            subject,
+            questions,
+            createdBy: user.id,
+            createdAt: new Date().toISOString()
+        };
+        tests.push(newTest);
+        showNotification('Test muvaffaqiyatli yaratildi!', 'success');
+    }
+
     localStorage.setItem('tests', JSON.stringify(tests));
+    refreshData();
 
-    showNotification('Test muvaffaqiyatli yaratildi!', 'success');
     closeModal('createTestModal');
     loadTests();
     this.reset();
@@ -1115,6 +1344,7 @@ function deleteHomework(homeworkId) {
     const homework = JSON.parse(localStorage.getItem('homework')) || [];
     const updatedHomework = homework.filter(h => h.id !== homeworkId);
     localStorage.setItem('homework', JSON.stringify(updatedHomework));
+    refreshData();
 
     showNotification('Uy vazifasi o\'chirildi!', 'success');
     loadHomework();
@@ -1126,6 +1356,7 @@ function deleteTest(testId) {
     const tests = JSON.parse(localStorage.getItem('tests')) || [];
     const updatedTests = tests.filter(t => t.id !== testId);
     localStorage.setItem('tests', JSON.stringify(updatedTests));
+    refreshData();
 
     showNotification('Test o\'chirildi!', 'success');
     loadTests();
@@ -1199,6 +1430,10 @@ function showTab(tabName) {
         loadGradingData();
     } else if (tabName === 'videoLesson') {
         loadVideoLessons();
+    } else if (tabName === 'homework') {
+        loadHomework();
+    } else if (tabName === 'tests') {
+        loadTests();
     }
 }
 
@@ -1311,7 +1546,6 @@ function updateDashboardSchedule() {
     const times = ['10:00 - 10:45', '11:55 - 12:40', '13:00 - 13:45'];
 
     const elements = {
-        num: document.getElementById('nextLessonNum'),
         subject: document.getElementById('nextLessonSubject'),
         time: document.getElementById('nextLessonTime'),
         class: document.getElementById('nextLessonClass'),
@@ -1322,7 +1556,6 @@ function updateDashboardSchedule() {
 
     if (elements.subject) {
         const randIdx = Math.floor(Math.random() * classes.length);
-        elements.num.textContent = Math.floor(Math.random() * 4) + 1;
         elements.subject.textContent = mySubject;
         elements.time.innerHTML = `<i class="far fa-clock mr-1"></i> ${times[randIdx]}`;
         elements.class.innerHTML = `<i class="fas fa-users mr-1"></i> ${classes[randIdx]}`;

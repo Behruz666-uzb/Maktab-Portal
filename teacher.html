@@ -22,8 +22,12 @@
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-4">
                     <h1 class="text-xl font-bold gradient-text">Maktab Portali</h1>
-                    <span class="px-3 py-1 rounded-full text-sm"
-                        style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">O'qituvchi</span>
+                    <div
+                        class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-md shadow-lg shadow-emerald-500/20">
+                        <i class="fas fa-chalkboard-teacher text-emerald-500 text-xs"></i>
+                        <span
+                            class="text-[10px] font-black tracking-widest uppercase text-emerald-600 dark:text-emerald-400">O'qituvchi</span>
+                    </div>
                 </div>
 
                 <div class="flex items-center space-x-4">
@@ -110,10 +114,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-3">
                     <p class="text-muted text-sm font-medium uppercase tracking-wider">Navbatdagi dars</p>
-                    <div class="flex items-start space-x-4">
-                        <div class="bg-blue-600/20 p-3 rounded-xl border border-blue-500/30">
-                            <span class="text-blue-400 font-bold" id="nextLessonNum">3</span>
-                        </div>
+                    <div class="flex items-start">
+
                         <div>
                             <h3 class="text-lg font-bold text-white mb-1" id="nextLessonSubject">-</h3>
                             <div class="flex items-center space-x-3 text-sm text-gray-400">
@@ -241,8 +243,9 @@
                     <div class="flex flex-wrap items-center gap-4">
                         <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Sinf:</label>
                         <select id="gradeClassSelector" onchange="loadStudentCards()"
-                            class="bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <option value="">Sinfni tanlang...</option>
+                            class="bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 text-gray-800 dark:text-white rounded-lg px-4 py-2.5 font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer">
+                            <option value="" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white py-2">
+                                Sinfni tanlang...</option>
                         </select>
                         <div class="flex-1"></div>
                         <div class="text-sm text-gray-500 dark:text-gray-400">
@@ -270,11 +273,12 @@
                         class="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-blue-900/30 rounded-2xl p-4 shadow-sm flex flex-wrap gap-4 items-center">
                         <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Filtrlar:</label>
                         <select id="journalFilterClass" onchange="filterJournal()"
-                            class="bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 text-gray-700 dark:text-gray-300 text-sm rounded-lg px-3 py-2">
-                            <option value="all">Barcha Sinflar</option>
+                            class="bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 text-gray-800 dark:text-white text-sm rounded-lg px-4 py-2.5 font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer">
+                            <option value="all" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white py-2">
+                                Barcha Sinflar</option>
                         </select>
                         <input type="date" id="journalFilterDate" onchange="filterJournal()"
-                            class="bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 text-gray-700 dark:text-gray-300 text-sm rounded-lg px-3 py-2">
+                            class="bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 text-gray-800 dark:text-white text-sm rounded-lg px-4 py-2.5 font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer">
                     </div>
 
                     <!-- Journal Table -->
@@ -335,11 +339,12 @@
                     <div class="p-6 space-y-5">
                         <input type="hidden" id="modalStudentId">
 
+
                         <!-- Date -->
                         <div>
                             <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Sana</label>
                             <input type="date" id="modalGradeDate"
-                                class="w-full bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer">
                         </div>
 
                         <!-- Grade Selection -->
@@ -375,7 +380,7 @@
                             <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Izoh
                                 (Ixtiyoriy)</label>
                             <textarea id="modalGradeComment" rows="3"
-                                class="w-full bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none focus:outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500"
                                 placeholder="Nazorat ishi, faol ishtirok..."></textarea>
                         </div>
                     </div>
@@ -414,7 +419,7 @@
             <div id="tests" class="tab-content hidden">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold">Testlar</h2>
-                    <button onclick="openModal('createTestModal')"
+                    <button onclick="resetTestModal(); openModal('createTestModal')"
                         class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
                         + Yangi Test
                     </button>
@@ -426,173 +431,387 @@
                 </div>
             </div>
 
-            <!-- Video Dars -->
+            <!-- Video Dars Section -->
             <div id="videoLesson" class="tab-content hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold">Video Darslar</h2>
-                    <div class="flex space-x-2 bg-gray-800 p-1 rounded-lg">
-                        <button onclick="switchVideoTab('live')" id="btn-live"
-                            class="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-green-600 text-white shadow-lg">
-                            🔴 Jonli Dars
-                        </button>
-                        <button onclick="switchVideoTab('library')" id="btn-library"
-                            class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white">
-                            📚 Video Kutubxona
-                        </button>
-                    </div>
+                <!-- Header Section -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Video Darsliklar</h2>
+                    <p class="text-gray-500 dark:text-gray-400">Jonli muloqot va online darslarni boshqarish</p>
                 </div>
 
-                <!-- JONLI DARS BO'LIMI -->
-                <div id="section-live">
-                    <div class="flex justify-end mb-4">
-                        <button onclick="startVideoLesson()"
-                            class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors">
-                            🎥 Yangi Dars Boshlash
-                        </button>
-                    </div>
-
-                    <!-- Aktiv video dars ma'lumotlari -->
-                    <div class="card-hover mb-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-semibold text-green-400" id="lessonTitle">Dars Sarlavha</h3>
-                                <p class="text-gray-300" id="lessonSubject">Fan nomi</p>
-                            </div>
-                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm">
-                                🔴 Jonli Efirda
-                            </span>
+                <!-- Active Lesson Card (Redesigned & Fixed) -->
+                <div id="currentLessonInfo" class="mb-12 hidden">
+                    <div
+                        class="relative overflow-hidden bg-white/95 dark:bg-[#1a2332]/95 backdrop-blur-2xl border border-green-500/20 dark:border-green-500/10 rounded-[2rem] p-8 md:p-10 shadow-2xl shadow-green-500/10">
+                        <!-- Decorative Orbs -->
+                        <div
+                            class="absolute -top-32 -right-32 w-80 h-80 bg-green-500/10 rounded-full blur-3xl animate-pulse">
                         </div>
+                        <div class="absolute -bottom-32 -left-32 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse"
+                            style="animation-delay: 1s;"></div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <h4 class="text-lg font-semibold mb-3">Dars Linki</h4>
-                                <div class="flex space-x-2">
-                                    <input type="text" id="meetLink"
-                                        class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white"
-                                        readonly>
+                        <div class="relative flex flex-col xl:flex-row xl:items-center justify-between gap-10">
+                            <!-- Left: Primary Info -->
+                            <div class="flex-1">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div
+                                        class="flex items-center gap-2 px-4 py-1.5 bg-green-500/10 rounded-full border border-green-500/20">
+                                        <span class="flex h-2.5 w-2.5 relative">
+                                            <span
+                                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                            <span
+                                                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                                        </span>
+                                        <span
+                                            class="text-[11px] font-black tracking-widest text-green-600 dark:text-green-400 uppercase">Jonli
+                                            Efir</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight"
+                                    id="lessonTitle">Mavzu nomi</h3>
+                                <div class="flex items-center gap-3 text-gray-500 dark:text-gray-400">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-500">
+                                        <i class="fas fa-book-open text-xs"></i>
+                                    </div>
+                                    <span class="text-lg font-bold" id="lessonSubject">Fan nomi</span>
+                                </div>
+                            </div>
+
+                            <!-- Right: Interactions -->
+                            <div class="flex flex-col gap-5 w-full xl:w-auto xl:min-w-[400px]">
+                                <!-- Meeting Link Group (Fixed Spacing & Icon) -->
+                                <div class="flex flex-col sm:flex-row items-center gap-3">
+                                    <div
+                                        class="flex-1 w-full flex items-center gap-3 bg-gray-50/50 dark:bg-[#0f1729]/50 border-2 border-transparent focus-within:border-blue-500/20 dark:border-blue-900/40 rounded-2xl px-5 transition-all">
+                                        <i class="fas fa-link text-gray-400 shrink-0"></i>
+                                        <input type="text" id="meetLink" readonly
+                                            class="w-full bg-transparent py-4 text-sm md:text-base text-gray-700 dark:text-gray-200 font-bold outline-none truncate"
+                                            value="https://meet.jit.si/...">
+                                    </div>
                                     <button onclick="copyMeetLink()"
-                                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
-                                        Nusxalash
+                                        class="shrink-0 w-full sm:w-auto px-8 py-4 bg-gray-900 dark:bg-blue-600 hover:bg-black dark:hover:bg-blue-500 text-white text-xs font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2">
+                                        <i class="far fa-copy text-sm"></i>
+                                        <span>Nusxa</span>
                                     </button>
                                 </div>
-                                <p class="text-sm text-gray-400 mt-2">Ushbu linkni o'quvchilar bilan ulashing</p>
-                            </div>
 
-                            <div>
-                                <h4 class="text-lg font-semibold mb-3">Dars Ma'lumotlari</h4>
-                                <div class="space-y-2 text-gray-300">
-                                    <p>📅 Sana: <span id="currentDate"></span></p>
-                                    <p>⏰ Vaqt: <span id="currentTime"></span></p>
-                                    <p>👨‍🏫 O'qituvchi: <span id="teacherName"></span></p>
-                                    <p>🏫 Sinf: <span id="teacherClassInfo"></span></p>
+                                <!-- Main Controls -->
+                                <div class="flex gap-4">
+                                    <button onclick="joinVideoLesson()"
+                                        class="flex-1 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl font-black text-lg shadow-xl shadow-blue-500/30 transition-all flex items-center justify-center gap-4 active:scale-95 group">
+                                        <i class="fas fa-video group-hover:scale-110 transition-transform"></i>
+                                        <span>Darsga Qo'shilish</span>
+                                    </button>
+                                    <button onclick="stopVideoLesson()"
+                                        class="w-16 h-16 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border-2 border-red-500/10 rounded-2xl flex items-center justify-center transition-all active:scale-95 text-xl"
+                                        title="Darsni yakunlash">
+                                        <i class="fas fa-power-off"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex space-x-2">
-                            <button onclick="joinVideoLesson()"
-                                class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors">
-                                🎥 Darsga Qo'shilish
-                            </button>
-                            <button onclick="stopVideoLesson()"
-                                class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition-colors">
-                                🛑 Darsni Yakunlash
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Yangi video dars boshlash formasi -->
-                    <div class="card-hover p-6">
-                        <h3 class="text-xl font-semibold mb-4">Yangi Video Dars</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-gray-300 mb-2">Dars Sarlavhasi</label>
-                                <input type="text" id="lessonTitleInput"
-                                    class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white"
-                                    placeholder="Masalan: Algebra - Chiziqli tenglamalar">
+                        <!-- Info Strip -->
+                        <div
+                            class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 pt-10 border-t border-gray-100 dark:border-blue-900/20">
+                            <div
+                                class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-blue-900/10 transition-colors">
+                                <div
+                                    class="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm">
+                                    <i class="far fa-calendar-alt text-lg"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-[10px] uppercase font-black text-gray-400 tracking-tighter">Sana</span>
+                                    <span class="text-base font-black text-gray-800 dark:text-gray-100"
+                                        id="currentDate">--.--.----</span>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-gray-300 mb-2">Fan</label>
-                                <select id="lessonSubject"
-                                    class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white">
-                                    <option value="algebra">Algebra</option>
-                                    <option value="geometry">Geometriya</option>
-                                    <option value="history">Tarix</option>
-                                    <option value="biology">Biologiya</option>
-                                    <option value="chemistry">Kimyo</option>
-                                    <option value="physics">Fizika</option>
-                                    <option value="english">Ingliz tili</option>
-                                    <option value="russian">Rus tili</option>
-                                    <option value="literature">Adabiyot</option>
-                                    <option value="informatics">Informatika</option>
-                                </select>
+                            <div
+                                class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-blue-900/10 transition-colors">
+                                <div
+                                    class="w-12 h-12 bg-purple-50 dark:bg-purple-900/20 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400 shadow-sm">
+                                    <i class="far fa-clock text-lg"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-[10px] uppercase font-black text-gray-400 tracking-tighter">Boshlandi</span>
+                                    <span class="text-base font-black text-gray-800 dark:text-gray-100"
+                                        id="currentTime">--:--</span>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-blue-900/10 transition-colors">
+                                <div
+                                    class="w-12 h-12 bg-orange-50 dark:bg-orange-900/20 rounded-xl flex items-center justify-center text-orange-600 dark:text-orange-400 shadow-sm">
+                                    <i class="fas fa-user-graduate text-lg"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-[10px] uppercase font-black text-gray-400 tracking-tighter">Sinf</span>
+                                    <span class="text-base font-black text-gray-800 dark:text-gray-100"
+                                        id="teacherClassInfo">---</span>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-blue-900/10 transition-colors">
+                                <div
+                                    class="w-12 h-12 bg-green-50 dark:bg-green-900/20 rounded-xl flex items-center justify-center text-green-600 dark:text-green-400 shadow-sm">
+                                    <i class="fas fa-id-badge text-lg"></i>
+                                </div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span
+                                        class="text-[10px] uppercase font-black text-gray-400 tracking-tighter">O'qituvchi</span>
+                                    <span class="text-base font-black text-gray-800 dark:text-gray-100 truncate"
+                                        id="teacherName">---</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- VIDEO KUTUBXONA BO'LIMI -->
-                <div id="section-library" class="hidden">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-semibold">Yuklangan Videolar</h3>
-                        <button onclick="openModal('addVideoModal')"
-                            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
-                            + Video Qo'shish
-                        </button>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Start New Lesson Form -->
+                    <div class="lg:col-span-1">
+                        <div
+                            class="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-blue-900/30 rounded-2xl p-6 shadow-sm sticky top-8">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Yangi Dars Boshlash
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Dars
+                                        Sarlavhasi</label>
+                                    <input type="text" id="lessonTitleInput"
+                                        class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md transition-all focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        placeholder="Mavzu nomini kiriting">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Fan</label>
+                                    <div class="relative">
+                                        <input type="text" id="lessonSubjectDisplay" readonly
+                                            class="w-full bg-gray-50 dark:bg-[#0f1729]/50 border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-500 dark:text-gray-400 font-medium cursor-not-allowed"
+                                            placeholder="Fan">
+                                        <i
+                                            class="fas fa-lock absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                    </div>
+                                </div>
+                                <button onclick="startVideoLesson()"
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-3">
+                                    <i class="fas fa-plus"></i>
+                                    Darsni Boshlash
+                                </button>
+                                <p class="text-[11px] text-center text-gray-400 mt-4 leading-relaxed italic">
+                                    Dars boshlanishi bilan o'quvchilarga bildirishnoma yuboriladi va live rejim
+                                    ishga
+                                    tushadi.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div id="teacherVideosList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Videolar ro'yxati JS orqali -->
+                    <!-- Lesson History -->
+                    <div class="lg:col-span-2">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Darslar Tarixi</h3>
+                            <span class="text-xs text-gray-500 dark:text-gray-400" id="lessonCountText">0 ta
+                                dars</span>
+                        </div>
+
+                        <div id="videoHistoryList" class="space-y-4">
+                            <!-- History items will be loaded here -->
+                            <div
+                                class="flex flex-col items-center justify-center py-12 text-center bg-gray-50/50 dark:bg-blue-900/5 rounded-2xl border-2 border-dashed border-gray-200 dark:border-blue-900/20">
+                                <div class="text-4xl mb-3">🎬</div>
+                                <p class="text-gray-500">Hozircha darslar tarixi mavjud emas</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Profil -->
             <div id="profile" class="tab-content hidden">
-                <h2 class="text-2xl font-bold mb-6">Profil</h2>
-                <div class="card-hover p-6">
-                    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-6">
-                        <div class="text-center">
-                            <img id="profileAvatar" class="profile-image mx-auto mb-4" src="" alt="Profile">
-                            <input type="file" id="avatarUpload" class="hidden" accept="image/*">
-                            <button onclick="document.getElementById('avatarUpload').click()"
-                                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
-                                Rasm Yuklash
-                            </button>
+                <!-- Profile Section Redesign -->
+                <div class="space-y-8">
+                    <!-- Hero Header Card -->
+                    <div
+                        class="relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+                        <!-- Background Decorations -->
+                        <div
+                            class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl">
+                        </div>
+                        <div
+                            class="absolute bottom-0 left-0 w-48 h-48 bg-blue-400/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl">
                         </div>
 
-                        <div class="flex-1">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label>Ism Familiya</label>
-                                    <input type="text" id="profileName">
+                        <div class="relative flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                            <!-- Avatar with Pulsing Ring -->
+                            <div class="relative group">
+                                <div
+                                    class="absolute inset-0 bg-white/20 rounded-full scale-110 blur group-hover:bg-white/30 transition-all">
                                 </div>
-
-                                <div>
-                                    <label>Sinf</label>
-                                    <input type="text" id="profileClass" disabled>
+                                <div
+                                    class="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white overflow-hidden shadow-2xl">
+                                    <img id="profileAvatar" class="w-full h-full object-cover" src="" alt="Profile">
                                 </div>
+                                <button onclick="document.getElementById('avatarUpload').click()"
+                                    class="absolute bottom-2 right-2 w-10 h-10 bg-white dark:bg-gray-800 text-blue-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                                <input type="file" id="avatarUpload" class="hidden" accept="image/*">
+                            </div>
 
-                                <div>
-                                    <label>Login</label>
-                                    <input type="text" id="profileUsername" disabled>
-                                </div>
-
-                                <div>
-                                    <label>Fan</label>
-                                    <input type="text" id="profileSubject" disabled>
-                                </div>
-
-                                <div>
-                                    <label>Coinlar</label>
-                                    <input type="text" id="profileCoins" class="text-yellow-400" disabled>
+                            <!-- Identity & Badges -->
+                            <div class="text-center md:text-left text-white space-y-3">
+                                <span
+                                    class="px-4 py-1.5 bg-white/20 rounded-full text-xs font-black tracking-widest uppercase border border-white/30 text-white">Ustoz
+                                    / O'qituvchi</span>
+                                <h2 class="text-4xl md:text-5xl font-black tracking-tight" id="profileHeaderName">Ism
+                                    Familiya</h2>
+                                <div class="flex flex-wrap justify-center md:justify-start gap-4">
+                                    <div
+                                        class="flex items-center gap-2 bg-black/30 px-4 py-2 rounded-xl backdrop-blur-sm transition-all hover:bg-black/40">
+                                        <i class="fas fa-book-reader text-blue-300"></i>
+                                        <span class="text-sm font-extrabold text-white"
+                                            id="profileHeaderSubject">Fan</span>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 bg-black/30 px-4 py-2 rounded-xl backdrop-blur-sm transition-all hover:bg-black/40">
+                                        <i class="fas fa-graduation-cap text-green-300"></i>
+                                        <span class="text-sm font-extrabold text-white" id="profileHeaderClass">9-A
+                                            Sinf</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <button onclick="updateProfile()" class="mt-6 success">
-                                Saqlash
-                            </button>
+                            <!-- Right Side: Mini Stats -->
+                            <div class="ml-auto flex gap-6 mt-6 md:mt-0">
+                                <div class="text-center">
+                                    <p class="text-[10px] font-black uppercase text-white/50 tracking-widest mb-1">
+                                        Coinlar</p>
+                                    <div class="flex items-center gap-2 text-2xl font-black text-yellow-400">
+                                        <i class="fas fa-coins"></i>
+                                        <span id="profileHeaderCoins">0</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Split Layout Details -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                        <!-- Left: Academic & Fixed Info -->
+                        <div class="lg:col-span-1 space-y-6">
+                            <div class="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-500/10 rounded-3xl p-6">
+                                <h4
+                                    class="text-sm font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                    <i class="fas fa-info-circle text-blue-500"></i>
+                                    Tizim Ma'lumotlari
+                                </h4>
+                                <div class="space-y-5">
+                                    <div>
+                                        <label
+                                            class="block text-[10px] uppercase font-bold text-gray-500 mb-1.5">O'qituvchi
+                                            ID</label>
+                                        <p class="text-sm font-black text-gray-800 dark:text-gray-200">#TEACHER-2024-001
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] uppercase font-bold text-gray-500 mb-1.5">Sinf</label>
+                                        <input type="text" id="profileClass" disabled
+                                            class="w-full bg-transparent border-none p-0 text-sm font-black text-gray-800 dark:text-gray-200 focus:ring-0">
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] uppercase font-bold text-gray-500 mb-1.5">Mutaxassislik</label>
+                                        <input type="text" id="profileSubject" disabled
+                                            class="w-full bg-transparent border-none p-0 text-sm font-black text-gray-800 dark:text-gray-200 focus:ring-0">
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] uppercase font-bold text-gray-500 mb-1.5">Hozirgi
+                                            Balans</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="text" id="profileCoins" disabled
+                                                class="bg-transparent border-none p-0 text-sm font-black text-yellow-500 focus:ring-0 w-24">
+                                            <span class="text-[10px] font-bold text-gray-400">COINS</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Academic Stats Widget -->
+                            <div
+                                class="bg-white dark:bg-[#1a2332] border border-gray-100 dark:border-blue-900/20 rounded-3xl p-6 shadow-sm">
+                                <h4 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Muvaffaqiyat
+                                </h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-green-50 dark:bg-green-900/10 p-4 rounded-2xl">
+                                        <span class="block text-[10px] font-bold text-green-600 mb-1">Davomat</span>
+                                        <span class="text-xl font-black text-green-700 dark:text-green-400"
+                                            id="profileAvgAttendance">0%</span>
+                                    </div>
+                                    <div class="bg-purple-50 dark:bg-purple-900/10 p-4 rounded-2xl">
+                                        <span class="block text-[10px] font-bold text-purple-600 mb-1">O'rtacha
+                                            Baho</span>
+                                        <span class="text-xl font-black text-purple-700 dark:text-purple-400"
+                                            id="profileAvgGrade">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Editable Settings -->
+                        <div class="lg:col-span-2">
+                            <div
+                                class="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-blue-900/20 rounded-[2.5rem] p-8 md:p-10 shadow-sm relative overflow-hidden">
+                                <h4 class="text-xl font-black text-gray-800 dark:text-white mb-8">Profilni Tahrirlash
+                                </h4>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                                    <!-- Name Input -->
+                                    <div class="space-y-4">
+                                        <label class="block text-sm font-black text-gray-700 dark:text-gray-300">Ism
+                                            Familiya</label>
+                                        <div
+                                            class="flex items-center gap-3 bg-gray-50 dark:bg-[#0f1729] border border-gray-100 dark:border-blue-900/40 rounded-2xl px-5 transition-all focus-within:ring-4 focus-within:ring-blue-500/10">
+                                            <i class="fas fa-user text-gray-400 shrink-0"></i>
+                                            <input type="text" id="profileName"
+                                                class="w-full bg-transparent py-4 font-bold text-gray-800 dark:text-white outline-none">
+                                        </div>
+                                    </div>
+                                    <!-- Username Input -->
+                                    <div class="space-y-4">
+                                        <label class="block text-sm font-black text-gray-700 dark:text-gray-300">Login
+                                            (Username)</label>
+                                        <div
+                                            class="flex items-center gap-3 bg-gray-50/50 dark:bg-[#0f1729]/30 border border-gray-100 dark:border-blue-900/40 rounded-2xl px-5 transition-all opacity-80">
+                                            <i class="fas fa-at text-gray-400 shrink-0"></i>
+                                            <input type="text" id="profileUsername" disabled
+                                                class="w-full bg-transparent py-4 font-bold text-gray-400 cursor-not-allowed outline-none">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-gray-100 dark:border-blue-900/20">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                                        <i class="fas fa-shield-alt text-blue-500"></i>
+                                        Sizning ma'lumotlaringiz xavfsiz holda saqlanadi.
+                                    </p>
+                                    <button onclick="updateProfile()"
+                                        class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-xl shadow-blue-500/25 transition-all active:scale-95 flex items-center justify-center gap-3">
+                                        <i class="fas fa-save"></i>
+                                        <span>O'zgarishlarni Saqlash</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -635,32 +854,47 @@
             <h3 class="text-xl font-bold mb-6">Yangi Uy Vazifasi</h3>
             <form id="addHomeworkForm" class="space-y-4">
                 <div>
-                    <label>Sarlavha</label>
-                    <input type="text" id="homeworkTitle" required>
+                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Sarlavha</label>
+                    <input type="text" id="homeworkTitle" required
+                        class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all"
+                        placeholder="Vazifa mavzusini kiriting">
                 </div>
                 <div>
-                    <label>Fan</label>
-                    <select id="homeworkSubject">
-                        <option value="algebra">Algebra</option>
-                        <option value="geometry">Geometriya</option>
-                        <option value="history">Tarix</option>
-                        <option value="biology">Biologiya</option>
-                        <option value="chemistry">Kimyo</option>
-                        <option value="physics">Fizika</option>
-                        <option value="english">Ingliz tili</option>
-                        <option value="russian">Rus tili</option>
-                        <option value="literature">Adabiyot</option>
-                        <option value="informatics">Informatika</option>
+                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Fan</label>
+                    <select id="homeworkSubject"
+                        class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23374151%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] dark:bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_1rem_center] bg-no-repeat">
+                        <option value="algebra" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Algebra
+                        </option>
+                        <option value="geometry" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                            Geometriya</option>
+                        <option value="history" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Tarix
+                        </option>
+                        <option value="biology" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                            Biologiya</option>
+                        <option value="chemistry" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Kimyo
+                        </option>
+                        <option value="physics" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Fizika
+                        </option>
+                        <option value="english" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Ingliz
+                            tili</option>
+                        <option value="russian" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Rus
+                            tili</option>
+                        <option value="literature" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                            Adabiyot</option>
+                        <option value="informatics" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                            Informatika</option>
                     </select>
                 </div>
                 <div>
-                    <label>Tavsif</label>
-                    <textarea id="homeworkDescription" placeholder="Vazifaning batafsil tavsifini yozing..."
-                        required></textarea>
+                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Tavsif</label>
+                    <textarea id="homeworkDescription" required
+                        class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all min-h-[120px]"
+                        placeholder="Vazifaning batafsil tavsifini yozing..."></textarea>
                 </div>
                 <div>
-                    <label>Muddat</label>
-                    <input type="date" id="homeworkDeadline" required>
+                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Muddat</label>
+                    <input type="date" id="homeworkDeadline" required
+                        class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer">
                 </div>
                 <div class="flex space-x-4 pt-4">
                     <button type="button" onclick="closeModal('addHomeworkModal')" class="flex-1">
@@ -677,26 +911,42 @@
     <!-- Test Yaratish Modal -->
     <div id="createTestModal" class="modal-overlay hidden">
         <div class="modal-content max-w-4xl">
-            <h3 class="text-xl font-bold mb-6">Yangi Test Yaratish</h3>
+            <h3 class="text-xl font-bold mb-6" id="testModalTitle">Yangi Test Yaratish</h3>
             <form id="createTestForm" class="space-y-6">
+                <input type="hidden" id="editingTestId">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label>Test Nomi</label>
-                        <input type="text" id="testTitle" required>
+                        <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Test
+                            Nomi</label>
+                        <input type="text" id="testTitle" required
+                            class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all"
+                            placeholder="Test nomini kiriting">
                     </div>
                     <div>
-                        <label>Fan</label>
-                        <select id="testSubject">
-                            <option value="algebra">Algebra</option>
-                            <option value="geometry">Geometriya</option>
-                            <option value="history">Tarix</option>
-                            <option value="biology">Biologiya</option>
-                            <option value="chemistry">Kimyo</option>
-                            <option value="physics">Fizika</option>
-                            <option value="english">Ingliz tili</option>
-                            <option value="russian">Rus tili</option>
-                            <option value="literature">Adabiyot</option>
-                            <option value="informatics">Informatika</option>
+                        <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Fan</label>
+                        <select id="testSubject"
+                            class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23374151%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] dark:bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_1rem_center] bg-no-repeat">
+                            <option value="algebra" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                                Algebra</option>
+                            <option value="geometry" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                                Geometriya</option>
+                            <option value="history" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                                Tarix</option>
+                            <option value="biology" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                                Biologiya</option>
+                            <option value="chemistry" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                                Kimyo</option>
+                            <option value="physics" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                                Fizika</option>
+                            <option value="english" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                                Ingliz tili</option>
+                            <option value="russian" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Rus
+                                tili</option>
+                            <option value="literature" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
+                                Adabiyot</option>
+                            <option value="informatics"
+                                class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Informatika
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -750,7 +1000,8 @@
                     <label>YouTube Link (Embed Link)</label>
                     <input type="url" id="videoUrl" required placeholder="https://www.youtube.com/embed/..."
                         class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white">
-                    <p class="text-xs text-gray-400 mt-1">YouTube videoni ochib, Share -> Embed tugmasini bosing va
+                    <p class="text-xs text-gray-400 mt-1">YouTube videoni ochib, Share -> Embed tugmasini bosing
+                        va
                         'src' ichidagi linkni nusxalang.</p>
                 </div>
                 <div>
