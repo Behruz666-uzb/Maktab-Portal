@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O'quvchi Paneli - Maktab Portali</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="nav-header shadow-lg p-4 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-xl font-bold gradient-text">Maktab Portali</h1>
+            <span class="px-2 py-1 rounded-full text-xs"
+                style="background: linear-gradient(135deg, #06b6d4, #3b82f6); box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);">O'quvchi</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+                <span class="text-yellow-400">🪙</span>
+                <span id="coinBalance" class="font-semibold">0</span>
+            </div>
+            <div id="userInfo" class="flex items-center space-x-2">
+                <img id="userAvatar" class="w-8 h-8 rounded-full bg-gray-600" src="" alt="Avatar">
+                <span id="userName" class="font-medium"></span>
+            </div>
+            <button onclick="toggleDarkMode()"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 dark:text-white px-3 py-1 rounded-lg text-sm transition-colors"
+                title="Mavzuni o'zgartirish">
+                <i class="fas fa-moon dark:hidden"></i>
+                <i class="fas fa-sun hidden dark:inline"></i>
+            </button>
+
+            <button onclick="logout()"
+                class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded-lg text-sm transition-colors">
+                Chiqish
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-4 py-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="card-hover p-4 flex items-center justify-between">
+                <div>
+                    <p class="text-muted text-sm">O'rtacha baho</p>
+                    <p id="averageGrade" class="text-lg font-bold">0</p>
+                </div>
+                <span class="text-2xl">📊</span>
+            </div>
+            <div class="card-hover">
+                <div>
+                    <p class="text-muted text-sm">Davomat</p>
+                    <p id="attendanceRate" class="text-lg font-bold">0%</p>
+                </div>
+                <span class="text-2xl">✅</span>
+            </div>
+            <div class="card-hover">
+                <div>
+                    <p class="text-muted text-sm">Reyting</p>
+                    <p id="studentRank" class="text-lg font-bold">-</p>
+                </div>
+                <span class="text-2xl">🏆</span>
+            </div>
+            <div class="card-hover">
+                <div>
+                    <p class="text-muted text-sm">Coinlar</p>
+                    <p id="coinBalanceCard" class="text-lg font-bold text-yellow-400">0</p>
+                </div>
+                <span class="text-2xl">🪙</span>
+            </div>
+        </div>
+
+        <!-- Schedule Section -->
+        <div class="card-hover p-4 mb-6 cursor-pointer" onclick="openSchedule()">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-lg font-semibold">Raspiyanie</h2>
+                <button class="primary px-4 py-1.5 text-xs">To'liq jadval →</button>
+            </div>
+            <div class="flex items-center space-x-2 mb-2">
+                <span class="text-sm text-muted">Bugun</span>
+                <div class="flex-1 bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-green-500 h-1.5 rounded-full" style="width: 66%;"></div>
+                </div>
+                <span class="text-sm text-muted">2/3 ta dars qoldi</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span id="nextLessonInfo" class="text-blue-400 font-medium">1. Fizika</span>
+                <span class="text-gray-400 text-sm">8:00 - 8:45</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mb-6">
+            <div class="card-hover p-2 overflow-x-auto">
+                <button onclick="showTab('videos')"
+                    class="tab-btn flex-none py-2 px-3 rounded-lg bg-blue-600 text-white text-sm">
+                    📹 Video Darsliklar
+                </button>
+                <button onclick="showTab('videoLessons')"
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    🎥 Jonli Darslar
+                </button>
+                <button onclick="showTab('tests')"
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    📝 Testlar
+                </button>
+                <button onclick="showTab('homework')"
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    📚 Uy Vazifalari
+                </button>
+                <button onclick="showTab('diary')"
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    📅 Kundalik
+                </button>
+                <button onclick="showTab('ranking')"
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    🏆 Reyting
+                </button>
+                <button onclick="showTab('shop')"
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    🛍️ Do'kon
+                </button>
+                <button onclick="showTab('profile')"
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    👤 Profil
+                </button>
+                <button onclick="showTab('events')"
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    ✨ Tadbirlar
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="tabContent">
+            <!-- Video Darsliklar -->
+            <div id="videos" class="tab-content">
+                <h2 class="text-lg font-semibold mb-4">Video Darsliklar</h2>
+                <div class="mb-6 space-y-4">
+                    <!-- Search and Filter Header -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="relative w-full md:w-64">
+                            <input type="text" id="videoSearch" placeholder="Video darslarni qidirish..."
+                                oninput="searchVideos(this.value)"
+                                class="w-full pl-10 pr-4 py-2 bg-card border border-themed rounded-xl focus:ring-2 focus:ring-blue-500/50 outline-none transition-all">
+                            <i
+                                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+
+                        <div class="flex space-x-2 overflow-x-auto pb-2 no-scrollbar px-1">
+                            <button onclick="filterVideos('all')"
+                                class="filter-btn active-filter px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-500/30 transform scale-105 ring-2 ring-blue-600 ring-offset-2 ring-offset-gray-50 dark:ring-offset-gray-900">
+                                📚 Barcha Fanlar
+                            </button>
+                            <button onclick="filterVideos('algebra')"
+                                class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                ➕ Algebra
+                            </button>
+                            <button onclick="filterVideos('geometry')"
+                                class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                📐 Geometriya
+                            </button>
+                            <button onclick="filterVideos('physics')"
+                                class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                ⚛️ Fizika
+                            </button>
+                            <button onclick="filterVideos('chemistry')"
+                                class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                🧪 Kimyo
+                            </button>
+                            <button onclick="filterVideos('biology')"
+                                class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white">
+                                🌿 Biologiya
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="videosContainer">
+                    <!-- Video kartalari JavaScript orqali yuklanadi -->
+                </div>
+            </div>
+
+            <!-- Jonli Video Darslar -->
+            <div id="videoLessons" class="tab-content hidden">
+                <h2 class="text-lg font-semibold mb-4">Jonli Video Darslar</h2>
+                <div id="videoLessonsContainer" class="space-y-4">
+                    <!-- Jonli darslar JavaScript orqali yuklanadi -->
+                </div>
+            </div>
+
+            <!-- Testlar -->
+            <div id="tests" class="tab-content hidden">
+                <h2 class="text-lg font-semibold mb-4">Testlar</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="testsContainer">
+                    <!-- Testlar JavaScript orqali yuklanadi -->
+                </div>
+            </div>
+
+            <!-- Uy Vazifalari -->
+            <div id="homework" class="tab-content hidden">
+                <h2 class="text-lg font-semibold mb-4">Uy Vazifalari</h2>
+                <div id="homeworkContainer" class="space-y-4">
+                    <!-- Uy vazifalari JavaScript orqali yuklanadi -->
+                </div>
+            </div>
+
+            <!-- Kundalik -->
+            <div id="diary" class="tab-content hidden">
+                <h2 class="text-lg font-semibold mb-4">Kundalik</h2>
+                <div class="card-hover">
+                    <div class="mb-4">
+                        <h3 class="text-base font-medium mb-2">Baholar</h3>
+                        <div id="gradesTable" class="overflow-x-auto">
+                            <!-- Baholar jadvali JavaScript orqali yuklanadi -->
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-medium mb-2">Davomat</h3>
+                        <div class="flex items-center space-x-4 mb-2">
+                            <div class="flex items-center space-x-1">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-xs text-gray-300">Keldi</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span class="text-xs text-gray-300">Kelmadi</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <span class="text-xs text-gray-300">Kechikdi</span>
+                            </div>
+                        </div>
+                        <div id="attendanceCalendar" class="grid grid-cols-5 sm:grid-cols-10 gap-1">
+                            <!-- Davomat kalendari JavaScript orqali yuklanadi -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reyting -->
+            <div id="ranking" class="tab-content hidden">
+                <h2 class="text-lg font-semibold mb-4">Sinf Reytingi</h2>
+                <div class="card-hover">
+                    <div id="rankingList" class="space-y-4">
+                        <!-- Reyting ro'yxati JavaScript orqali yuklanadi -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Do'kon -->
+            <div id="shop" class="tab-content hidden">
+                <h2 class="text-lg font-semibold mb-4">Do'kon</h2>
+                <div class="flex items-center space-x-2 mb-4 p-2 bg-yellow-900/50 rounded-lg">
+                    <span class="text-xl">🪙</span>
+                    <div>
+                        <p class="font-medium text-sm">Sizning coinlaringiz: <span id="shopCoinBalance"
+                                class="text-yellow-400">0</span></p>
+                        <p class="text-xs text-yellow-200">Testlarni topshirish va darslarda faol qatnashish orqali coin
+                            yuting!</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="shopItems">
+                    <!-- Do'kon mahsulotlari JavaScript orqali yuklanadi -->
+                </div>
+            </div>
+
+            <!-- Profil -->
+            <div id="profile" class="tab-content hidden">
+                <h2 class="text-lg font-semibold mb-4">Profil</h2>
+                <div class="card-hover">
+                    <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                        <div class="text-center">
+                            <img id="profileAvatar" class="w-16 h-16 rounded-full bg-gray-600 mx-auto mb-2" src=""
+                                alt="Profile">
+                            <input type="file" id="avatarUpload" class="hidden" accept="image/*">
+                            <button onclick="document.getElementById('avatarUpload').click()" class="primary">
+                                Rasm Yuklash
+                            </button>
+                        </div>
+                        <div class="flex-1">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div>
+                                    <label>Ism Familiya</label>
+                                    <input type="text" id="profileName">
+                                </div>
+                                <div>
+                                    <label>Sinf</label>
+                                    <input type="text" id="profileClass" disabled>
+                                </div>
+                                <div>
+                                    <label>Login</label>
+                                    <input type="text" id="profileUsername" disabled>
+                                </div>
+                                <div>
+                                    <label>Coinlar</label>
+                                    <input type="text" id="profileCoins" class="text-yellow-400" disabled>
+                                </div>
+                            </div>
+                            <button onclick="updateProfile()" class="mt-2 success">
+                                Saqlash
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tadbirlar -->
+            <div id="events" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-main">Dam olish kunlari uchun tadbirlar</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="studentEventsGrid">
+                    <!-- Tadbirlar JavaScript orqali yuklanadi -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Modal -->
+    <div id="testModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="testTitle" class="text-xl font-bold"></h3>
+                <button onclick="closeModal('testModal')"
+                    class="text-muted hover:text-main text-2xl transition-colors">✕</button>
+            </div>
+            <div id="testQuestions" class="space-y-2 max-h-64 overflow-y-auto">
+                <!-- Test savollari JavaScript orqali yuklanadi -->
+            </div>
+            <div class="mt-2 flex justify-between items-center">
+                <span id="testProgress" class="text-gray-400 text-xs">0/0 savol</span>
+                <button onclick="submitTest()" class="success">
+                    Testni Yakunlash
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-7xl">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-xl font-bold">Haftalik Dars Jadvali</h3>
+                    <p class="text-sm text-muted">Sizning haftalik o'quv rejangiz</p>
+                </div>
+                <button onclick="closeModal('scheduleModal')"
+                    class="text-muted hover:text-main text-3xl transition-all hover:scale-110">✕</button>
+            </div>
+            <div id="weeklyScheduleContent" class="overflow-x-auto">
+                <!-- Dars jadvali JavaScript orqali yuklanadi -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+
+    <script>
+        // Use global themeManager
+    </script>
+    <script src="script.js"></script>
+    <script src="student.js"></script>
+</body>
+
+</html>

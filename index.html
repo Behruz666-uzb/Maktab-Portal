@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maktab Portali - Kirish</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Theme Toggle Styling */
+        .theme-toggle {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 100;
+            padding: 0.75rem;
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--bg-main);
+            border-color: var(--primary);
+        }
+
+        /* Liquid Galaxy Login Page Enhancements */
+        .illustration {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.4);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .illustration:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 30px 80px rgba(6, 182, 212, 0.5);
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        .dark .form-container {
+            background: linear-gradient(135deg, rgba(15, 23, 41, 0.9), rgba(26, 31, 58, 0.9));
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.2);
+        }
+
+        .hover-glow {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-glow:hover {
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.4), 0 0 80px rgba(6, 182, 212, 0.3);
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .welcome-title {
+            background: linear-gradient(135deg, #06b6d4, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .demo-box {
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .demo-box {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+    </style>
+
+</head>
+
+<body class="min-h-screen centered-layout">
+    <!-- Theme Toggle -->
+    <button onclick="toggleDarkMode()" class="theme-toggle" title="Mavzuni o'zgartirish">
+        <i class="fas fa-moon dark:hidden"></i>
+        <i class="fas fa-sun hidden dark:inline"></i>
+    </button>
+
+    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <!-- Left Side: Welcome and Illustration -->
+        <div class="text-center md:text-left">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 welcome-title">Maktab Portaliga Xush Kelibsiz!</h1>
+            <p class="text-lg md:text-xl mb-6">Ilm olish, darslar va
+                o'qituvchilar bilan muloqot qilish uchun tizimga kiring yoki ro'yxatdan o'ting. Bizning portal orqali
+                ta'lim jarayonini yanada qiziqarli va samarali qiling!</p>
+            <img src="./Assets/81db2a10-2f75-4ea2-85fb-09472b824dd0.png "
+                class="illustration mx-auto md:mx-0 rounded-lg shadow-xl">
+        </div>
+
+        <!-- Right Side: Forms -->
+        <div class="form-container max-w-md mx-auto rounded-xl shadow-2xl p-10 hover-glow">
+            <!-- Login Form -->
+            <div id="loginForm" class="transition-all duration-500">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-white dark:text-white mb-2">Tizimga Kirish</h2>
+                    <p class="text-gray-400">Hisobingizga kiring</p>
+                </div>
+
+                <form id="loginFormElement" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Login</label>
+                        <input type="text" id="loginUsername" placeholder="Loginingizni kiriting" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Parol</label>
+                        <input type="password" id="loginPassword" placeholder="Parolingizni kiriting" required>
+                    </div>
+
+                    <button type="submit" class="w-full primary transform hover:scale-105">
+                        Kirish
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-gray-400">Hisobingiz yo'qmi?</p>
+                    <button onclick="showRegister()"
+                        class="text-blue-500 hover:text-blue-400 font-semibold transition-colors mt-2">
+                        Ro'yxatdan o'tish
+                    </button>
+                </div>
+
+                <!-- Demo ma'lumotlar -->
+                <div class="mt-8 p-4 demo-box">
+                    <h3 class="font-semibold mb-2" style="color: var(--primary-cyan);">🔑 Demo kirish:</h3>
+                    <p class="text-sm">👨‍💼 Admin: Behruz / b2009019</p>
+                    <p class="text-sm">👨‍🎓 O'quvchi: ali / 123456</p>
+                    <p class="text-sm">👨‍🏫 O'qituvchi: teacher / 123456</p>
+                </div>
+            </div>
+
+
+            <!-- Register Form -->
+            <div id="registerForm" class="hidden transition-all duration-500">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-white dark:text-white mb-2">Ro'yxatdan O'tish</h2>
+                    <p class="text-gray-400">Yangi hisob yarating</p>
+                </div>
+
+                <form id="registerFormElement" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Ism Familiya</label>
+                        <input type="text" id="regName" placeholder="Ism familiyangiz" required>
+                    </div>
+
+                    <div>
+                        <label>Login</label>
+                        <input type="text" id="regUsername" placeholder="Loginingiz" required>
+                    </div>
+
+                    <div>
+                        <label>Parol</label>
+                        <input type="password" id="regPassword" placeholder="Parol" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Rol</label>
+                        <select id="regRole">
+                            <option value="student">O'quvchi</option>
+                            <option value="teacher">O'qituvchi</option>
+                        </select>
+                    </div>
+
+                    <div id="classSelection" class="hidden">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Sinf</label>
+                        <select id="regClass">
+                            <option value="5a">5-A</option>
+                            <option value="5b">5-B</option>
+                            <option value="6a">6-A</option>
+                            <option value="6b">6-B</option>
+                            <option value="7a">7-A</option>
+                            <option value="7b">7-B</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="w-full success transform hover:scale-105">
+                        Ro'yxatdan o'tish
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-gray-400">Hisobingiz bormi?</p>
+                    <button onclick="showLogin()"
+                        class="text-blue-500 hover:text-blue-400 font-semibold transition-colors mt-2">
+                        Tizimga kirish
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O'qituvchi Paneli - Maktab Portali</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="nav-header shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-xl font-bold gradient-text">Maktab Portali</h1>
+                    <span class="px-3 py-1 rounded-full text-sm"
+                        style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">O'qituvchi</span>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-yellow-400">🪙</span>
+                        <span id="coinBalance" class="font-semibold">0</span>
+                    </div>
+                    <div id="userInfo" class="flex items-center space-x-3">
+                        <img id="userAvatar" class="w-8 h-8 rounded-full bg-gray-600" src="" alt="Avatar">
+                        <span id="userName" class="font-medium"></span>
+                        <span id="teacherClass" class="text-gray-300 text-sm"></span>
+                    </div>
+                    <button onclick="toggleDarkMode()"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 dark:text-white px-4 py-2 rounded-lg transition-colors"
+                        title="Mavzuni o'zgartirish">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
+
+                    <button onclick="logout()"
+                        class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                        Chiqish
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="card-hover p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400">O'quvchilar</p>
+                        <p id="studentCount" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                    <div class="text-3xl">👨‍🎓</div>
+                </div>
+            </div>
+
+            <div class="card-hover p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400">O'rtacha Davomat</p>
+                        <p id="avgAttendance" class="text-2xl font-bold text-white">0%</p>
+                    </div>
+                    <div class="text-3xl">✅</div>
+                </div>
+            </div>
+
+            <div class="card-hover p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400">O'rtacha Baho</p>
+                        <p id="avgGrade" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                    <div class="text-3xl">📊</div>
+                </div>
+            </div>
+
+            <div class="card-hover p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400">Coinlar</p>
+                        <p id="coinBalanceCard" class="text-2xl font-bold text-yellow-400">0</p>
+                    </div>
+                    <div class="text-3xl">🪙</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Section -->
+        <div class="card-hover p-6 mb-8 cursor-pointer" onclick="openSchedule()">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl">📅</span>
+                    <h2 class="text-xl font-bold">Dars Jadvali</h2>
+                </div>
+                <button onclick="openSchedule(event)" class="primary px-4 py-2 text-xs">To'liq jadval →</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <p class="text-muted text-sm font-medium uppercase tracking-wider">Navbatdagi dars</p>
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-blue-600/20 p-3 rounded-xl border border-blue-500/30">
+                            <span class="text-blue-400 font-bold" id="nextLessonNum">3</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1" id="nextLessonSubject">-</h3>
+                            <div class="flex items-center space-x-3 text-sm text-gray-400">
+                                <span id="nextLessonTime"><i class="far fa-clock mr-1"></i> --:--</span>
+                                <span id="nextLessonClass"><i class="fas fa-users mr-1"></i> -</span>
+                                <span id="nextLessonRoom"><i class="fas fa-door-open mr-1"></i> -</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col justify-end">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-muted">Bugungi darslar</span>
+                        <span class="text-sm font-medium text-green-400" id="todayProgress">2 / 6</span>
+                    </div>
+                    <div class="w-full bg-gray-700 h-2 rounded-full overflow-hidden">
+                        <div id="todayProgressBar" class="bg-green-500 h-full transition-all duration-500"
+                            style="width: 33%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mb-8">
+            <div class="card-hover p-2 overflow-x-auto">
+                <button onclick="showTab('students')"
+                    class="tab-btn flex-none py-3 px-4 rounded-lg transition-all bg-green-600 text-white">
+                    👨‍🎓 O'quvchilar
+                </button>
+                <button onclick="showTab('attendance')"
+                    class="tab-btn flex-none py-3 px-4 rounded-lg transition-all text-gray-300 hover:text-white">
+                    📅 Davomat
+                </button>
+                <button onclick="showTab('grades')"
+                    class="tab-btn flex-none py-3 px-4 rounded-lg transition-all text-gray-300 hover:text-white">
+                    📝 Baholash
+                </button>
+                <button onclick="showTab('homework')"
+                    class="tab-btn flex-none py-3 px-4 rounded-lg transition-all text-gray-300 hover:text-white">
+                    📚 Uy Vazifasi
+                </button>
+                <button onclick="showTab('tests')"
+                    class="tab-btn flex-none py-3 px-4 rounded-lg transition-all text-gray-300 hover:text-white">
+                    🧪 Test Yaratish
+                </button>
+                <button onclick="showTab('videoLesson')"
+                    class="tab-btn flex-none py-3 px-4 rounded-lg transition-all text-gray-300 hover:text-white">
+                    📹 Video Dars
+                </button>
+                <button onclick="showTab('profile')"
+                    class="tab-btn flex-none py-3 px-4 rounded-lg transition-all text-gray-300 hover:text-white">
+                    👤 Profil
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="tabContent">
+            <!-- O'quvchilar -->
+            <div id="students" class="tab-content">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">O'quvchilar Ro'yxati</h2>
+                    <button onclick="openModal('addStudentModal')"
+                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        + O'quvchi Qo'shish
+                    </button>
+                </div>
+                <div class="card-hover p-6">
+                    <div id="studentsList" class="space-y-4">
+                        <!-- O'quvchilar ro'yxati JavaScript orqali yuklanadi -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Davomat -->
+            <div id="attendance" class="tab-content hidden">
+                <h2 class="text-2xl font-bold mb-6">Davomat Belgilash</h2>
+                <div class="card-hover p-6">
+                    <div class="mb-6">
+                        <label class="block text-gray-300 mb-2">Sana</label>
+                        <input type="date" id="attendanceDate"
+                            class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                    </div>
+                    <div id="attendanceList" class="space-y-3">
+                        <!-- Davomat ro'yxati JavaScript orqali yuklanadi -->
+                    </div>
+                    <button onclick="saveAttendance()"
+                        class="mt-6 bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold transition-colors">
+                        Davomatni Saqlash
+                    </button>
+                </div>
+            </div>
+
+            <!-- Baholash (Grading) -->
+            <div id="grades" class="tab-content hidden space-y-6">
+                <!-- Header & Controls -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Baholash</h2>
+                        <p class="text-gray-500 dark:text-gray-400 mt-1">O'quvchilarni baholash va natijalarni ko'rish
+                        </p>
+                    </div>
+
+                    <!-- View Toggle -->
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-blue-900/30 rounded-xl p-1 flex gap-1">
+                            <button onclick="switchGradingView('grid')" id="gridViewBtn"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white">
+                                <i class="fas fa-th-large mr-2"></i>Kartochkalar
+                            </button>
+                            <button onclick="switchGradingView('journal')" id="journalViewBtn"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#0f172a]">
+                                <i class="fas fa-table mr-2"></i>Jurnal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Class Selector Bar -->
+                <div
+                    class="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-blue-900/30 rounded-2xl p-4 shadow-sm">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Sinf:</label>
+                        <select id="gradeClassSelector" onchange="loadStudentCards()"
+                            class="bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="">Sinfni tanlang...</option>
+                        </select>
+                        <div class="flex-1"></div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <span class="font-medium" id="studentCountDisplay">0</span> ta o'quvchi
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid View (Student Cards) -->
+                <div id="gridView" class="space-y-6">
+                    <div id="studentCardsGrid"
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <!-- Student cards will be rendered here -->
+                        <div class="col-span-full text-center py-12 text-gray-400">
+                            <i class="fas fa-users text-5xl mb-4 opacity-50"></i>
+                            <p class="text-lg">Sinfni tanlang</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Journal View (Table) -->
+                <div id="journalView" class="hidden space-y-6">
+                    <!-- Filters -->
+                    <div
+                        class="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-blue-900/30 rounded-2xl p-4 shadow-sm flex flex-wrap gap-4 items-center">
+                        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Filtrlar:</label>
+                        <select id="journalFilterClass" onchange="filterJournal()"
+                            class="bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 text-gray-700 dark:text-gray-300 text-sm rounded-lg px-3 py-2">
+                            <option value="all">Barcha Sinflar</option>
+                        </select>
+                        <input type="date" id="journalFilterDate" onchange="filterJournal()"
+                            class="bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 text-gray-700 dark:text-gray-300 text-sm rounded-lg px-3 py-2">
+                    </div>
+
+                    <!-- Journal Table -->
+                    <div
+                        class="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-blue-900/30 rounded-2xl overflow-hidden shadow-xl">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead
+                                    class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-blue-900/20 dark:text-gray-300 border-b border-gray-200 dark:border-blue-900/30">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4">Sana</th>
+                                        <th scope="col" class="px-6 py-4">O'quvchi</th>
+                                        <th scope="col" class="px-6 py-4">Sinf</th>
+                                        <th scope="col" class="px-6 py-4 text-center">Baho</th>
+                                        <th scope="col" class="px-6 py-4">Izoh</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="journalTableBody" class="divide-y divide-gray-200 dark:divide-blue-900/30">
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                            Ma'lumot topilmadi
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grading Modal -->
+            <div id="gradeModal"
+                class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-[#1a2332] rounded-3xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-blue-900/30 transform transition-all scale-95 opacity-0"
+                    id="gradeModalContent">
+                    <!-- Modal Header -->
+                    <div class="p-6 border-b border-gray-200 dark:border-blue-900/30">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                    <i class="fas fa-star text-blue-600 dark:text-blue-400 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Baho Qo'yish</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400" id="modalStudentName">O'quvchi
+                                    </p>
+                                </div>
+                            </div>
+                            <button onclick="closeGradeModal()"
+                                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6 space-y-5">
+                        <input type="hidden" id="modalStudentId">
+
+                        <!-- Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Sana</label>
+                            <input type="date" id="modalGradeDate"
+                                class="w-full bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <!-- Grade Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Baho</label>
+                            <div class="grid grid-cols-4 gap-3">
+                                <button type="button" onclick="selectModalGrade(5)" data-value="5"
+                                    class="modal-grade-btn group relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-gray-200 dark:border-blue-900/30 bg-gray-50 dark:bg-[#0f172a] hover:border-green-500 transition-all">
+                                    <div class="text-2xl font-bold text-green-600 dark:text-green-400">5</div>
+                                    <div class="text-xs text-gray-500 mt-1">A'lo</div>
+                                </button>
+                                <button type="button" onclick="selectModalGrade(4)" data-value="4"
+                                    class="modal-grade-btn group relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-gray-200 dark:border-blue-900/30 bg-gray-50 dark:bg-[#0f172a] hover:border-blue-500 transition-all">
+                                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">4</div>
+                                    <div class="text-xs text-gray-500 mt-1">Yaxshi</div>
+                                </button>
+                                <button type="button" onclick="selectModalGrade(3)" data-value="3"
+                                    class="modal-grade-btn group relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-gray-200 dark:border-blue-900/30 bg-gray-50 dark:bg-[#0f172a] hover:border-yellow-500 transition-all">
+                                    <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">3</div>
+                                    <div class="text-xs text-gray-500 mt-1">Qoniq.</div>
+                                </button>
+                                <button type="button" onclick="selectModalGrade(2)" data-value="2"
+                                    class="modal-grade-btn group relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-gray-200 dark:border-blue-900/30 bg-gray-50 dark:bg-[#0f172a] hover:border-red-500 transition-all">
+                                    <div class="text-2xl font-bold text-red-600 dark:text-red-400">2</div>
+                                    <div class="text-xs text-gray-500 mt-1">Yomon</div>
+                                </button>
+                            </div>
+                            <input type="hidden" id="modalSelectedGrade">
+                        </div>
+
+                        <!-- Comment -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Izoh
+                                (Ixtiyoriy)</label>
+                            <textarea id="modalGradeComment" rows="3"
+                                class="w-full bg-gray-50 dark:bg-[#0f172a] border border-gray-200 dark:border-blue-900/30 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                placeholder="Nazorat ishi, faol ishtirok..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="p-6 border-t border-gray-200 dark:border-blue-900/30 flex gap-3">
+                        <button onclick="closeGradeModal()"
+                            class="flex-1 px-6 py-3 rounded-xl border border-gray-300 dark:border-blue-900/30 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-[#0f172a] transition-all">
+                            Bekor qilish
+                        </button>
+                        <button onclick="saveGradeFromModal()"
+                            class="flex-1 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-500/30 transition-all">
+                            Saqlash
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uy Vazifasi -->
+            <div id="homework" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Uy Vazifalari</h2>
+                    <button onclick="openModal('addHomeworkModal')"
+                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        + Yangi Vazifa
+                    </button>
+                </div>
+                <div class="card-hover p-6">
+                    <div id="homeworkList" class="space-y-4">
+                        <!-- Uy vazifalari ro'yxati -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Yaratish -->
+            <div id="tests" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Testlar</h2>
+                    <button onclick="openModal('createTestModal')"
+                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        + Yangi Test
+                    </button>
+                </div>
+                <div class="card-hover p-6">
+                    <div id="testsList" class="space-y-4">
+                        <!-- Testlar ro'yxati -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Dars -->
+            <div id="videoLesson" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Video Darslar</h2>
+                    <div class="flex space-x-2 bg-gray-800 p-1 rounded-lg">
+                        <button onclick="switchVideoTab('live')" id="btn-live"
+                            class="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-green-600 text-white shadow-lg">
+                            🔴 Jonli Dars
+                        </button>
+                        <button onclick="switchVideoTab('library')" id="btn-library"
+                            class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white">
+                            📚 Video Kutubxona
+                        </button>
+                    </div>
+                </div>
+
+                <!-- JONLI DARS BO'LIMI -->
+                <div id="section-live">
+                    <div class="flex justify-end mb-4">
+                        <button onclick="startVideoLesson()"
+                            class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors">
+                            🎥 Yangi Dars Boshlash
+                        </button>
+                    </div>
+
+                    <!-- Aktiv video dars ma'lumotlari -->
+                    <div class="card-hover mb-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-semibold text-green-400" id="lessonTitle">Dars Sarlavha</h3>
+                                <p class="text-gray-300" id="lessonSubject">Fan nomi</p>
+                            </div>
+                            <span class="bg-green-600 px-3 py-1 rounded-full text-sm">
+                                🔴 Jonli Efirda
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                            <div>
+                                <h4 class="text-lg font-semibold mb-3">Dars Linki</h4>
+                                <div class="flex space-x-2">
+                                    <input type="text" id="meetLink"
+                                        class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white"
+                                        readonly>
+                                    <button onclick="copyMeetLink()"
+                                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                                        Nusxalash
+                                    </button>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-2">Ushbu linkni o'quvchilar bilan ulashing</p>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold mb-3">Dars Ma'lumotlari</h4>
+                                <div class="space-y-2 text-gray-300">
+                                    <p>📅 Sana: <span id="currentDate"></span></p>
+                                    <p>⏰ Vaqt: <span id="currentTime"></span></p>
+                                    <p>👨‍🏫 O'qituvchi: <span id="teacherName"></span></p>
+                                    <p>🏫 Sinf: <span id="teacherClassInfo"></span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2">
+                            <button onclick="joinVideoLesson()"
+                                class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors">
+                                🎥 Darsga Qo'shilish
+                            </button>
+                            <button onclick="stopVideoLesson()"
+                                class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition-colors">
+                                🛑 Darsni Yakunlash
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Yangi video dars boshlash formasi -->
+                    <div class="card-hover p-6">
+                        <h3 class="text-xl font-semibold mb-4">Yangi Video Dars</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-300 mb-2">Dars Sarlavhasi</label>
+                                <input type="text" id="lessonTitleInput"
+                                    class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white"
+                                    placeholder="Masalan: Algebra - Chiziqli tenglamalar">
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Fan</label>
+                                <select id="lessonSubject"
+                                    class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                                    <option value="algebra">Algebra</option>
+                                    <option value="geometry">Geometriya</option>
+                                    <option value="history">Tarix</option>
+                                    <option value="biology">Biologiya</option>
+                                    <option value="chemistry">Kimyo</option>
+                                    <option value="physics">Fizika</option>
+                                    <option value="english">Ingliz tili</option>
+                                    <option value="russian">Rus tili</option>
+                                    <option value="literature">Adabiyot</option>
+                                    <option value="informatics">Informatika</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIDEO KUTUBXONA BO'LIMI -->
+                <div id="section-library" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold">Yuklangan Videolar</h3>
+                        <button onclick="openModal('addVideoModal')"
+                            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                            + Video Qo'shish
+                        </button>
+                    </div>
+
+                    <div id="teacherVideosList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Videolar ro'yxati JS orqali -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profil -->
+            <div id="profile" class="tab-content hidden">
+                <h2 class="text-2xl font-bold mb-6">Profil</h2>
+                <div class="card-hover p-6">
+                    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-6">
+                        <div class="text-center">
+                            <img id="profileAvatar" class="profile-image mx-auto mb-4" src="" alt="Profile">
+                            <input type="file" id="avatarUpload" class="hidden" accept="image/*">
+                            <button onclick="document.getElementById('avatarUpload').click()"
+                                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                                Rasm Yuklash
+                            </button>
+                        </div>
+
+                        <div class="flex-1">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label>Ism Familiya</label>
+                                    <input type="text" id="profileName">
+                                </div>
+
+                                <div>
+                                    <label>Sinf</label>
+                                    <input type="text" id="profileClass" disabled>
+                                </div>
+
+                                <div>
+                                    <label>Login</label>
+                                    <input type="text" id="profileUsername" disabled>
+                                </div>
+
+                                <div>
+                                    <label>Fan</label>
+                                    <input type="text" id="profileSubject" disabled>
+                                </div>
+
+                                <div>
+                                    <label>Coinlar</label>
+                                    <input type="text" id="profileCoins" class="text-yellow-400" disabled>
+                                </div>
+                            </div>
+
+                            <button onclick="updateProfile()" class="mt-6 success">
+                                Saqlash
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modallar -->
+    <!-- O'quvchi Qo'shish Modal -->
+    <div id="addStudentModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-6">Yangi O'quvchi Qo'shish</h3>
+            <form id="addStudentForm" class="space-y-4">
+                <div>
+                    <label>Ism Familiya</label>
+                    <input type="text" id="newStudentName" required>
+                </div>
+                <div>
+                    <label>Login</label>
+                    <input type="text" id="newStudentUsername" required>
+                </div>
+                <div>
+                    <label>Parol</label>
+                    <input type="password" id="newStudentPassword" required>
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeModal('addStudentModal')" class="flex-1">
+                        Bekor Qilish
+                    </button>
+                    <button type="submit" class="flex-1 success">
+                        Qo'shish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Uy Vazifasi Modal -->
+    <div id="addHomeworkModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-6">Yangi Uy Vazifasi</h3>
+            <form id="addHomeworkForm" class="space-y-4">
+                <div>
+                    <label>Sarlavha</label>
+                    <input type="text" id="homeworkTitle" required>
+                </div>
+                <div>
+                    <label>Fan</label>
+                    <select id="homeworkSubject">
+                        <option value="algebra">Algebra</option>
+                        <option value="geometry">Geometriya</option>
+                        <option value="history">Tarix</option>
+                        <option value="biology">Biologiya</option>
+                        <option value="chemistry">Kimyo</option>
+                        <option value="physics">Fizika</option>
+                        <option value="english">Ingliz tili</option>
+                        <option value="russian">Rus tili</option>
+                        <option value="literature">Adabiyot</option>
+                        <option value="informatics">Informatika</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Tavsif</label>
+                    <textarea id="homeworkDescription" placeholder="Vazifaning batafsil tavsifini yozing..."
+                        required></textarea>
+                </div>
+                <div>
+                    <label>Muddat</label>
+                    <input type="date" id="homeworkDeadline" required>
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeModal('addHomeworkModal')" class="flex-1">
+                        Bekor Qilish
+                    </button>
+                    <button type="submit" class="flex-1 success">
+                        Yaratish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Test Yaratish Modal -->
+    <div id="createTestModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-4xl">
+            <h3 class="text-xl font-bold mb-6">Yangi Test Yaratish</h3>
+            <form id="createTestForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label>Test Nomi</label>
+                        <input type="text" id="testTitle" required>
+                    </div>
+                    <div>
+                        <label>Fan</label>
+                        <select id="testSubject">
+                            <option value="algebra">Algebra</option>
+                            <option value="geometry">Geometriya</option>
+                            <option value="history">Tarix</option>
+                            <option value="biology">Biologiya</option>
+                            <option value="chemistry">Kimyo</option>
+                            <option value="physics">Fizika</option>
+                            <option value="english">Ingliz tili</option>
+                            <option value="russian">Rus tili</option>
+                            <option value="literature">Adabiyot</option>
+                            <option value="informatics">Informatika</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="testQuestionsContainer" class="space-y-4">
+                    <!-- Savollar qo'shiladi -->
+                </div>
+
+                <button type="button" onclick="addQuestion()"
+                    class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                    <span>+</span>
+                    <span>Yangi Savol Qo'shish</span>
+                </button>
+
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeModal('createTestModal')" class="flex-1">
+                        Bekor Qilish
+                    </button>
+                    <button type="submit" class="flex-1 success">
+                        Testni Yaratish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Video Qo'shish Modal -->
+    <div id="addVideoModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-6">Yangi Video Qo'shish</h3>
+            <form id="addVideoForm" class="space-y-4">
+                <div>
+                    <label>Sarlavha</label>
+                    <input type="text" id="videoTitle" required placeholder="Mavzu nomi">
+                </div>
+                <div>
+                    <label>Fan</label>
+                    <select id="videoSubject">
+                        <option value="algebra">Algebra</option>
+                        <option value="geometry">Geometriya</option>
+                        <option value="history">Tarix</option>
+                        <option value="biology">Biologiya</option>
+                        <option value="chemistry">Kimyo</option>
+                        <option value="physics">Fizika</option>
+                        <option value="english">Ingliz tili</option>
+                        <option value="russian">Rus tili</option>
+                        <option value="literature">Adabiyot</option>
+                        <option value="informatics">Informatika</option>
+                    </select>
+                </div>
+                <div>
+                    <label>YouTube Link (Embed Link)</label>
+                    <input type="url" id="videoUrl" required placeholder="https://www.youtube.com/embed/..."
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                    <p class="text-xs text-gray-400 mt-1">YouTube videoni ochib, Share -> Embed tugmasini bosing va
+                        'src' ichidagi linkni nusxalang.</p>
+                </div>
+                <div>
+                    <label>Tavsif (ixtiyoriy)</label>
+                    <textarea id="videoDescription" rows="3" placeholder="Video haqida qisqacha..."></textarea>
+                </div>
+
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeModal('addVideoModal')" class="flex-1">
+                        Bekor Qilish
+                    </button>
+                    <button type="submit" class="flex-1 success">
+                        Qo'shish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-7xl">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-2xl font-bold">Haftalik Dars Jadvali</h3>
+                    <p class="text-sm text-muted">Sizning haftalik o'quv rejangiz va xonalar taqsimoti</p>
+                </div>
+                <button onclick="closeModal('scheduleModal')"
+                    class="text-muted hover:text-main text-3xl transition-all hover:scale-110">✕</button>
+            </div>
+            <div id="weeklyScheduleContent" class="overflow-x-auto">
+                <!-- JavaScript orqali yuklanadi -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Use global themeManager
+    </script>
+    <script src="script.js"></script>
+    <script src="teacher.js"></script>
+</body>
+
+</html>
