@@ -552,16 +552,16 @@ function loadRankings() {
 
         const isFirst = idx === 0;
         const rankColors = isFirst ? 'from-yellow-400 to-amber-600' : (idx === 1 ? 'from-slate-300 to-slate-500' : 'from-orange-400 to-amber-800');
-        const borderColor = isFirst ? 'border-yellow-400' : (idx === 1 ? 'border-slate-300' : 'border-orange-500');
         const height = isFirst ? 'h-72 md:h-80' : 'h-60 md:h-64';
-        const crown = isFirst ? '<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-3xl animate-bounce">👑</div>' : '';
 
         const podiumCard = `
             <div class="relative w-full md:w-64 ${height} bg-gradient-to-b ${rankColors} rounded-[2.5rem] p-6 text-white shadow-2xl flex flex-col items-center justify-end transition-transform hover:scale-105 group">
-                ${crown}
                 <div class="absolute top-8 flex flex-col items-center">
-                    <div class="w-20 h-20 rounded-full border-4 border-white/30 overflow-hidden mb-3 shadow-xl">
-                        <img src="${student.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(student.name) + '&background=random'}" class="w-full h-full object-cover">
+                    <div class="relative mb-3">
+                        ${isFirst ? '<div class="absolute -top-10 left-4 -translate-x-1/2 text-4xl animate-bounce drop-shadow-lg z-10">👑</div>' : ''}
+                        <div class="w-20 h-20 rounded-full border-4 border-white overflow-hidden shadow-2xl">
+                            <img src="${student.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(student.name) + '&background=random'}" class="w-full h-full object-cover">
+                        </div>
                     </div>
                     <h4 class="font-black text-center line-clamp-1 px-2">${student.name}</h4>
                     <span class="text-[10px] font-black uppercase tracking-widest opacity-80">${student.score.toFixed(1)} Bal</span>
@@ -612,33 +612,54 @@ function loadShopItems() {
     const shopItems = JSON.parse(localStorage.getItem('shopItems')) || [];
     const user = getCurrentUser();
     const container = document.getElementById('shopItems');
+    const balanceDisplay = document.getElementById('shopCoinBalance');
+
+    if (!container) return;
+    if (balanceDisplay) balanceDisplay.textContent = user.coins || 0;
+
     container.innerHTML = '';
 
     shopItems.forEach(item => {
         const canAfford = user.coins >= item.price;
-        const isOwned = user.purchasedItems && user.purchasedItems.find(p => p.itemId === item.id);
+        const isOwned = user.purchasedItems && user.purchasedItems.some(p => p.itemId === item.id);
+
+        const cardClass = isOwned ? 'ring-2 ring-green-500 shadow-green-500/10' : (canAfford ? 'hover:shadow-xl hover:shadow-blue-500/10' : 'opacity-70');
+        const buttonClass = isOwned
+            ? 'bg-green-500 text-white cursor-default'
+            : (canAfford
+                ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 active:scale-95'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed');
+
         const shopItem = `
-            <div class="shop-item bg-card border ${isOwned ? 'border-green-500' : 'border-themed'} rounded-xl p-6 text-center shadow-sm card-hover ${!isOwned && !canAfford ? 'opacity-50' : ''}">
-                <div class="text-6xl mb-4">${item.image}</div>
-                <h3 class="text-lg font-semibold mb-2 text-main">${item.name}</h3>
-                <p class="text-yellow-600 dark:text-yellow-400 font-bold mb-4 text-xl">${item.price} 🪙</p>
-                ${isOwned ? `
-                    <button class="w-full bg-green-600 py-2 rounded-lg cursor-default text-white">
-                        ✅ Sotib Olingan
-                    </button>
-                ` : `
-                    <button onclick="buyItem(${item.id})" 
-                            class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg transition-colors text-white ${!canAfford ? 'opacity-50 cursor-not-allowed' : ''
-            }"
-                            ${!canAfford ? 'disabled' : ''}>
-                        Sotib Olish
-                    </button>
-                `}
+            <div class="group relative bg-card border border-themed rounded-[2rem] p-8 transition-all duration-300 flex flex-col items-center text-center ${cardClass}">
+                <!-- New/Hot Badges -->
+                <div class="absolute top-4 right-4">
+                    ${item.isNew ? '<span class="bg-blue-500 text-white text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter shadow-lg shadow-blue-500/30">Nadir</span>' : ''}
+                </div>
+
+                <!-- Visual -->
+                <div class="w-32 h-32 bg-themed-hover rounded-3xl flex items-center justify-center text-6xl mb-6 transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-inner">
+                    ${item.image}
+                </div>
+
+                <!-- Info -->
+                <h4 class="text-xl font-black text-gray-800 dark:text-white mb-2 line-clamp-1">${item.name}</h4>
+                <div class="flex items-center gap-1.5 mb-8">
+                    <span class="text-2xl font-black text-yellow-500">${item.price}</span>
+                    <span class="text-xs text-yellow-600 dark:text-yellow-400 mt-1">🪙</span>
+                </div>
+
+                <!-- Action -->
+                <button 
+                    ${isOwned || !canAfford ? 'disabled' : `onclick="buyItem(${item.id})"`}
+                    class="w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${buttonClass}"
+                >
+                    ${isOwned ? '<i class="fas fa-check-circle"></i> Sotib Olingan' : (canAfford ? 'Sotib Olish' : 'Mablag\' Yetarli Emas')}
+                </button>
             </div>
         `;
         container.innerHTML += shopItem;
     });
-
 }
 
 function buyItem(itemId) {
@@ -884,8 +905,9 @@ function filterVideos(subject) {
                         <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
                             ${video.author}
                         </p>
-                        <button class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium transition-colors">
-                            Ko'rish &rarr;
+                        <button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500 transition-all font-bold text-xs uppercase tracking-wider group-hover/btn:translate-x-1">
+                            <i class="fas fa-play text-[10px]"></i>
+                            <span>Ko'rish</span>
                         </button>
                     </div>
                 </div>
@@ -1033,6 +1055,7 @@ function calculateRankings() {
         id: u.id,
         name: u.name,
         class: u.class,
+        avatar: u.avatar, // Added avatar
         averageGrade: calculateAverageGrade(u.grades),
         attendanceRate: calculateAttendanceRate(u.attendance),
         score: calculateScore(u)
@@ -1200,53 +1223,89 @@ function showTab(tabName) {
 
 function loadEventsForStudent() {
     const events = JSON.parse(localStorage.getItem('weekendEvents')) || [];
-
-    console.log('Student: Loading events from localStorage:', events);
     const container = document.getElementById('studentEventsGrid');
-    if (!container) {
-        console.error('Student: studentEventsGrid container not found!');
-        return;
-    }
+    if (!container) return;
 
     container.innerHTML = '';
 
     if (events.length === 0) {
-        container.innerHTML = '<p class="text-gray-400 text-center py-4 col-span-full">Hozircha tadbirlar mavjud emas</p>';
+        container.innerHTML = `
+            <div class="col-span-full py-20 bg-card border border-dashed border-themed rounded-[2.5rem] flex flex-col items-center justify-center text-center px-6">
+                <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center text-3xl mb-4 grayscale opacity-50">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h4 class="text-xl font-black text-gray-800 dark:text-white mb-2">Hozircha Tadbirlar Yo'q</h4>
+                <p class="text-gray-500 text-sm max-w-xs">Yangi tadbirlar haqida tez orada xabar beramiz. Bizni kuzatib boring!</p>
+            </div>
+        `;
         return;
     }
 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const icons = {
-        movie: '🎬',
-        concert: '🎵',
-        park: '🌳',
-        mountain: '🏔️',
-        other: '✨'
+    const categoryConfig = {
+        movie: { icon: 'fa-film', color: 'text-rose-500', bg: 'bg-rose-500/10', label: 'Kino' },
+        concert: { icon: 'fa-music', color: 'text-purple-500', bg: 'bg-purple-500/10', label: 'Konsert' },
+        park: { icon: 'fa-tree', color: 'text-emerald-500', bg: 'bg-emerald-500/10', label: 'Sayohat' },
+        mountain: { icon: 'fa-mountain', color: 'text-blue-500', bg: 'bg-blue-500/10', label: 'Tog\'' },
+        other: { icon: 'fa-star', color: 'text-amber-500', bg: 'bg-amber-500/10', label: 'Maxsus' }
     };
 
     events.forEach(event => {
         const isJoined = event.participants && event.participants.includes(currentUser.id);
+        const config = categoryConfig[event.category] || categoryConfig.other;
+        const eventDate = new Date(event.date);
+        const day = eventDate.getDate();
+        const month = eventDate.toLocaleDateString('uz-UZ', { month: 'short' }).toUpperCase();
+
         const eventCard = `
-            <div class="card-hover p-4 flex flex-col h-full bg-card border border-themed rounded-xl">
-                <div class="flex items-center space-x-3 mb-3">
-                    <span class="text-3xl">${icons[event.category] || '✨'}</span>
-                    <div class="flex-1">
-                        <h3 class="font-bold text-main">${event.title}</h3>
-                        <p class="text-[10px] text-muted">${new Date(event.date).toLocaleDateString('uz-UZ', { month: 'long', day: 'numeric', weekday: 'long' })}</p>
-                    </div>
+            <div class="group relative bg-card border border-themed rounded-[2.5rem] p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 flex flex-col h-full">
+                <!-- Date Ribbon -->
+                <div class="absolute -top-4 left-8 bg-white dark:bg-gray-800 border border-themed shadow-xl rounded-2xl p-3 flex flex-col items-center min-w-[60px] transform transition-transform group-hover:-translate-y-2">
+                    <span class="text-2xl font-black text-blue-600">${day}</span>
+                    <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">${month}</span>
                 </div>
-                <p class="text-[11px] text-muted mb-4 flex-1 line-clamp-2">${event.description || 'Batafsil ma\'lumot yo\'q'}</p>
-                <div class="flex justify-between items-center mt-auto pt-4 border-t border-themed">
-                    <span class="text-[10px] font-medium px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">
-                        ${event.participants ? event.participants.length : 0} kishi bormoqda
+
+                <!-- Category Badge -->
+                <div class="flex justify-end mb-8">
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl ${config.bg} ${config.color} text-[10px] font-black uppercase tracking-widest">
+                        <i class="fas ${config.icon} text-[8px]"></i>
+                        ${config.label}
                     </span>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1">
+                    <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-3 group-hover:text-blue-600 transition-colors">${event.title}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 line-clamp-3 leading-relaxed">
+                        ${event.description || 'Bu tadbir haqida hozircha batafsil ma\'lumot yo\'q, lekin juda qiziqarli bo\'lishi aniq!'}
+                    </p>
+                </div>
+
+                <!-- Footer Info -->
+                <div class="flex flex-col gap-6 mt-auto pt-6 border-t border-themed">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-2">
+                                <div class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-200"></div>
+                                <div class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-300"></div>
+                            </div>
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-tight">
+                                <span class="text-blue-500">${event.participants ? event.participants.length : 0}</span> kishi bormoqda
+                            </span>
+                        </div>
+                        ${(event.participants && event.participants.length > 5) ? '<i class="fas fa-fire text-orange-500 animate-bounce text-xs"></i>' : ''}
+                    </div>
+
                     <button onclick="joinEvent(${event.id})" 
-                            class="px-3 py-1.5 text-[10px] rounded-lg transition-all ${isJoined ? 'bg-gray-600 cursor-default grayscale opacity-70' : 'primary hover:scale-105'}">
-                        ${isJoined ? "✅ Ro'yxatdan o'tdingiz" : "Bormoqchiman →"}
+                            class="w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${isJoined
+                ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 cursor-default'
+                : 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-95'
+            }">
+                        ${isJoined ? '<i class="fas fa-check-circle"></i> Ro\'yxatdan O\'tdingiz' : 'Ishtirok Etish <i class="fas fa-arrow-right text-[8px]"></i>'}
                     </button>
                 </div>
             </div>
-            `;
+        `;
         container.innerHTML += eventCard;
     });
 }

@@ -213,28 +213,174 @@ function initializeData() {
     localStorage.setItem('weekendEvents', JSON.stringify(weekendEvents));
 }
 
+// Multi-step Registration Functions
+let selectedRegRole = null;
+
+function selectRole(role) {
+    selectedRegRole = role;
+    document.getElementById('regRole').value = role;
+
+    // UI Update
+    document.querySelectorAll('.identity-card').forEach(card => card.classList.remove('selected'));
+    const targetCard = role === 'student' ? document.getElementById('roleStudent') : document.getElementById('roleTeacher');
+    if (targetCard) targetCard.classList.add('selected');
+
+    // Enable button
+    const nextBtn = document.getElementById('regNextBtn');
+    if (nextBtn) {
+        nextBtn.disabled = false;
+        nextBtn.classList.remove('bg-gray-700', 'text-gray-400');
+        nextBtn.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-500/20');
+    }
+}
+
+function nextRegStep() {
+    if (!selectedRegRole) return;
+
+    const s1 = document.getElementById('regStep1');
+    const s2 = document.getElementById('regStep2');
+
+    // Content update
+    const subText = document.getElementById('regStep2Sub');
+    if (subText) {
+        subText.textContent = selectedRegRole === 'student' ? 'O\'quvchi sifatida ma\'lumotlaringizni kiriting' : 'O\'qituvchi sifatida ma\'lumotlaringizni kiriting';
+    }
+
+    // Role-specific field toggle
+    const classSelection = document.getElementById('classSelection');
+    const subjectSelection = document.getElementById('subjectSelection');
+
+    if (classSelection) {
+        if (selectedRegRole === 'student') {
+            classSelection.classList.remove('hidden');
+        } else {
+            classSelection.classList.add('hidden');
+        }
+    }
+
+    if (subjectSelection) {
+        if (selectedRegRole === 'teacher') {
+            subjectSelection.classList.remove('hidden');
+        } else {
+            subjectSelection.classList.add('hidden');
+        }
+    }
+
+    // Animation Step 1 Exit
+    s1.classList.add('fade-out');
+
+    setTimeout(() => {
+        s1.classList.add('hidden');
+        s2.classList.remove('hidden');
+
+        // Prepare Step 2 elements for cascade
+        const header = document.getElementById('regStep2Header');
+        const fields = document.querySelectorAll('.reg-field-item');
+
+        // Reset states
+        header.classList.remove('animate-slide-subtle', 'animate-pulse');
+        header.style.opacity = '0';
+        fields.forEach(f => {
+            f.classList.remove('animate-slit', 'stagger-1', 'stagger-2', 'stagger-3', 'stagger-4', 'stagger-5');
+            f.style.opacity = '0';
+        });
+
+        // Trigger Cascade
+        setTimeout(() => {
+            s2.classList.remove('opacity-0');
+            header.classList.add('animate-slide-subtle');
+
+            // Subtitle Pulse (Subtle)
+            setTimeout(() => subText.classList.add('animate-pulse'), 800);
+
+            // Staggered Fields (Geometric Slit)
+            fields.forEach((field, index) => {
+                field.classList.add('animate-slit', `stagger-${index + 1}`);
+            });
+        }, 50);
+    }, 500);
+}
+
+function prevRegStep() {
+    const s1 = document.getElementById('regStep1');
+    const s2 = document.getElementById('regStep2');
+
+    // Reverse Animation
+    s2.classList.add('opacity-0');
+
+    setTimeout(() => {
+        s2.classList.add('hidden');
+        s1.classList.remove('hidden', 'fade-out');
+
+        // Re-trigger Step 1 Stagger
+        const header = s1.querySelector('.text-center');
+        const card1 = document.getElementById('roleStudent');
+        const card2 = document.getElementById('roleTeacher');
+        const nextBtn = document.getElementById('regNextBtn');
+        const footer = s1.querySelector('.mt-6');
+
+        [header, card1, card2, nextBtn, footer].forEach(el => {
+            el.classList.remove('animate-quantum', 'animate-slide-subtle', 'stagger-1', 'stagger-2', 'stagger-3');
+            el.style.opacity = '0';
+        });
+
+        setTimeout(() => {
+            header.classList.add('animate-slide-subtle');
+            card1.classList.add('animate-quantum', 'stagger-1');
+            card2.classList.add('animate-quantum', 'stagger-2');
+            nextBtn.classList.add('animate-slide-subtle', 'stagger-3');
+            footer.classList.add('animate-slide-subtle', 'stagger-3');
+        }, 50);
+    }, 500);
+}
+
 // Form ko'rsatish funksiyalari
 function showRegister() {
-    document.getElementById('loginForm').classList.add('hidden');
-    document.getElementById('registerForm').classList.remove('hidden');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+
+    // Zoom out the login form
+    loginForm.classList.add('zoom-exit');
+
+    setTimeout(() => {
+        loginForm.classList.add('hidden');
+        loginForm.classList.remove('zoom-exit');
+        registerForm.classList.remove('hidden');
+
+        // Reset to step 1
+        const s1 = document.getElementById('regStep1');
+        const s2 = document.getElementById('regStep2');
+        s1.classList.remove('hidden', 'fade-out');
+        s2.classList.add('hidden', 'opacity-0');
+
+        // Apply Staggered Cinematic Entry
+        const header = s1.querySelector('.text-center');
+        const card1 = document.getElementById('roleStudent');
+        const card2 = document.getElementById('roleTeacher');
+        const nextBtn = document.getElementById('regNextBtn');
+        const footer = s1.querySelector('.mt-6');
+
+        // Clear previous animations if any
+        [header, card1, card2, nextBtn, footer].forEach(el => {
+            el.classList.remove('animate-quantum', 'animate-slide-subtle', 'stagger-1', 'stagger-2', 'stagger-3');
+            el.style.opacity = '0';
+        });
+
+        // Trigger Animations
+        setTimeout(() => {
+            header.classList.add('animate-slide-subtle');
+            card1.classList.add('animate-quantum', 'stagger-1');
+            card2.classList.add('animate-quantum', 'stagger-2');
+            nextBtn.classList.add('animate-slide-subtle', 'stagger-3');
+            footer.classList.add('animate-slide-subtle', 'stagger-3');
+        }, 50);
+
+    }, 400);
 }
 
 function showLogin() {
     document.getElementById('registerForm').classList.add('hidden');
     document.getElementById('loginForm').classList.remove('hidden');
-}
-
-// Rol o'zgarganda sinf tanlovini ko'rsatish
-const regRole = document.getElementById('regRole');
-if (regRole) {
-    regRole.addEventListener('change', function (e) {
-        const classSelection = document.getElementById('classSelection');
-        if (e.target.value === 'student') {
-            classSelection.classList.remove('hidden');
-        } else {
-            classSelection.classList.add('hidden');
-        }
-    });
 }
 
 // Xabarlarni ko'rsatish
@@ -296,6 +442,7 @@ if (registerForm) {
         const password = document.getElementById('regPassword').value;
         const role = document.getElementById('regRole').value;
         const userClass = role === 'student' ? document.getElementById('regClass').value : null;
+        const userSubject = role === 'teacher' ? document.getElementById('regSubject').value : null;
 
         // Login bandligini tekshirish
         if (users.find(u => u.username === username)) {
@@ -323,6 +470,7 @@ if (registerForm) {
             role,
             coins: role === 'teacher' ? 500 : 100,
             class: userClass,
+            subject: userSubject,
             avatar: null,
             grades: {},
             attendance: [],
@@ -364,10 +512,12 @@ function logout() {
 
 // Modal funksiyalari
 function openModal(modalId) {
+
     const modal = document.getElementById(modalId);
+
     if (modal) {
         modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Scroll ni to'xtatish
+        // document.body.style.overflow = 'hidden'; // Scroll ni to'xtatish
     }
 }
 

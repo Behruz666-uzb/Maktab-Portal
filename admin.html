@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Paneli - Ingliz Tili Muloqot Portali</title>
+    <title>Admin Paneli Maktab Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,6 +28,49 @@
             transition: height 0.5s ease;
             border-radius: 8px 8px 0 0;
         }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .power-card:hover .power-aura {
+            opacity: 1;
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .command-input {
+            background: rgba(var(--themed-bg-rgb), 0.5);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .command-input:focus {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        /* Select dropdown light mode fix */
+        select option {
+            background-color: white;
+            color: #1f2937;
+        }
+
+        .dark select option {
+            background-color: #1f2937;
+            color: white;
+        }
     </style>
 </head>
 
@@ -37,7 +80,7 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-4">
-                    <h1 class="text-xl font-bold gradient-text">Ingliz Tili Muloqot Portali</h1>
+                    <h1 class="text-xl font-bold gradient-text">Maktab Portal</h1>
                     <div
                         class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 backdrop-blur-md shadow-lg shadow-red-500/20">
                         <i class="fas fa-user-shield text-red-500 text-xs"></i>
@@ -47,10 +90,7 @@
                 </div>
 
                 <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-yellow-400">🪙</span>
-                        <span id="coinBalance" class="font-semibold">0</span>
-                    </div>
+                    <!-- Coin balance removed for admin -->
                     <div id="userInfo" class="flex items-center space-x-3">
                         <img id="userAvatar" class="w-8 h-8 rounded-full bg-blue-100 dark:bg-gray-600" src=""
                             alt="Avatar">
@@ -75,13 +115,13 @@
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 py-8">
         <!-- Welcome Illustration Section -->
-        <div class="mb-8 text-center card-hover p-6 rounded-xl">
+        <!-- <div class="mb-8 text-center card-hover p-6 rounded-xl">
             <img src="https://via.placeholder.com/300x200/3b82f6/ffffff?text=Cartoon+English+Admin+Dashboard"
                 alt="Cartoon illustration of English learning admin dashboard"
                 class="mx-auto rounded-lg shadow-md max-w-sm">
             <p class="mt-4 text-lg text-blue-800 dark:text-gray-200">Admin paneliga xush kelibsiz! Ingliz tilida
                 samarali muloqot sirlarini o'rgatish tizimini boshqaring va statistikani kuzating.</p>
-        </div>
+        </div> -->
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -140,7 +180,7 @@
                 </button>
                 <button onclick="showTab('events')"
                     class="tab-btn flex-none py-3 px-6 rounded-md transition-all text-blue-600 hover:text-blue-800 dark:text-gray-300 dark:hover:text-white">
-                    <i class="fas fa-sparkles mr-2"></i> Tadbirlar
+                    ✨ Tadbirlar
                 </button>
                 <button onclick="showTab('analytics')"
                     class="tab-btn flex-none py-3 px-6 rounded-md transition-all text-blue-600 hover:text-blue-800 dark:text-gray-300 dark:hover:text-white">
@@ -165,11 +205,11 @@
                     <h2 class="text-2xl font-bold text-blue-800 dark:text-white">Barcha Foydalanuvchilar</h2>
                     <div class="flex space-x-2">
                         <input type="text" id="userSearch"
-                            class="border border-blue-200 rounded-lg px-4 py-2 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-500"
+                            class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
                             placeholder="Qidirish...">
                         <button onclick="exportUsers()"
-                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
-                            <i class="fas fa-file-export mr-2"></i> Export
+                            class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors flex items-center gap-2">
+                            <i class="fas fa-file-export"></i> Export
                         </button>
                     </div>
                 </div>
@@ -193,67 +233,174 @@
                 </div>
             </div>
 
-            <!-- O'qituvchilar -->
-            <div id="teachers" class="tab-content hidden card-hover p-6 rounded-xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-blue-800 dark:text-white">O'qituvchi Arizalari</h2>
-                    <button onclick="openModal('addTeacherModal')"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-plus mr-2"></i> O'qituvchi Qo'shish
-                    </button>
-                </div>
-                <div id="teachersList" class="space-y-4">
-                    <!-- O'qituvchilar ro'yxati -->
+            <!-- O'qituvchilar (Redesigned Directory) -->
+            <div id="teachers" class="tab-content hidden">
+                <div class="space-y-8">
+                    <!-- Directory Header & Stats -->
+                    <div
+                        class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-themed">
+                        <div class="flex-1">
+                            <h2 class="text-3xl font-black text-gray-900 dark:text-white mb-2">Ustozlar Jamoasi</h2>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Maktabning barcha o'qituvchilari va
+                                ularning faoliyatini boshqarish</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <!-- Quick Stats -->
+                            <div
+                                class="bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-2xl border border-blue-100 dark:border-blue-800">
+                                <span class="block text-[10px] font-black uppercase text-blue-400 tracking-wider">Jami
+                                    Ustozlar</span>
+                                <span class="text-xl font-black text-blue-600 dark:text-blue-400"
+                                    id="dirTotalTeachers">0</span>
+                            </div>
+                            <div
+                                class="bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-2xl border border-emerald-100 dark:border-emerald-800">
+                                <span
+                                    class="block text-[10px] font-black uppercase text-emerald-400 tracking-wider">Jonli
+                                    Darslar</span>
+                                <span class="text-xl font-black text-emerald-600 dark:text-emerald-400"
+                                    id="dirActiveLessons">0</span>
+                            </div>
+                            <!-- Action -->
+                            <button onclick="openModal('addTeacherModal')"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2 active:scale-95">
+                                <i class="fas fa-plus"></i> Ustoz Qo'shish
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Teacher Grid -->
+                    <div id="teachersList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                        <!-- JavaScript will inject high-fidelity teacher cards here -->
+                        <div class="col-span-full py-20 text-center text-gray-400 italic">Ma'lumotlar yuklanmoqda...
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Tadbirlar Boshqaruvi -->
-            <div id="events" class="tab-content hidden card-hover p-6 rounded-xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-blue-800 dark:text-white">Tadbirlar Boshqaruvi</h2>
-                    <button onclick="openModal('addEventModal')"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-lg shadow-blue-500/20">
-                        <i class="fas fa-plus mr-2"></i> Tadbir Qo'shish
-                    </button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="eventsGrid">
-                    <!-- Eventlar kartalari -->
+            <!-- Tadbirlar Boshqaruvi (Redesigned Manager) -->
+            <div id="events" class="tab-content hidden">
+                <div class="space-y-8">
+                    <!-- Events Header & Stats -->
+                    <div
+                        class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-themed">
+                        <div class="flex-1">
+                            <h2 class="text-3xl font-black text-gray-900 dark:text-white mb-2">Tadbirlar Markazi</h2>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Maktab hayotidagi barcha tadbirlarni
+                                yaratish va tahlil qilish</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <!-- Quick Stats -->
+                            <div
+                                class="bg-purple-50 dark:bg-purple-900/20 px-4 py-2 rounded-2xl border border-purple-100 dark:border-purple-800">
+                                <span class="block text-[10px] font-black uppercase text-purple-400 tracking-wider">Jami
+                                    Tadbirlar</span>
+                                <span class="text-xl font-black text-purple-600 dark:text-purple-400"
+                                    id="statTotalEvents">0</span>
+                            </div>
+                            <div
+                                class="bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded-2xl border border-amber-100 dark:border-amber-800">
+                                <span
+                                    class="block text-[10px] font-black uppercase text-amber-500 tracking-wider">Yaqinda</span>
+                                <span class="text-xl font-black text-amber-600 dark:text-amber-400"
+                                    id="statUpcomingEvents">0</span>
+                            </div>
+                            <!-- Action -->
+                            <button onclick="openModal('addEventModal')"
+                                class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 active:scale-95">
+                                <i class="fas fa-calendar-plus"></i> Tadbir Qo'shish
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Events Grid -->
+                    <div id="eventsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                        <!-- JavaScript will inject high-fidelity event cards here -->
+                        <div class="col-span-full py-20 text-center text-gray-400 italic">Tadbirlar yuklanmoqda...</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Statistika -->
-            <div id="analytics" class="tab-content hidden card-hover p-6 rounded-xl">
-                <h2 class="text-2xl font-bold text-blue-800 dark:text-white mb-6">Umumiy Statistika</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="p-6 card-hover rounded-xl">
-                        <h3 class="text-xl font-semibold mb-4 text-blue-800 dark:text-white">Faol foydalanuvchilar</h3>
-                        <div id="activeUsersChart" class="h-64 flex items-end space-x-2">
-                            <!-- Simple CSS bar chart example -->
-                            <div class="w-1/6 chart-bar" style="height: 60%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 80%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 50%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 90%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 70%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 85%;"></div>
-                        </div>
+            <!-- Statistika (Redesigned Insights Studio) -->
+            <div id="analytics" class="tab-content hidden">
+                <div class="space-y-10">
+                    <!-- Analytics Header -->
+                    <div class="pb-8 border-b border-themed">
+                        <h2 class="text-3xl font-black text-gray-900 dark:text-white mb-2">Insights Studio</h2>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Maktab tizimidagi barcha ko'rsatkichlar va
+                            jonli faollik tahlili</p>
                     </div>
-                    <div class="p-6 card-hover rounded-xl">
-                        <h3 class="text-xl font-semibold mb-4 text-blue-800 dark:text-white">Darajalar bo'yicha taqsimot
-                        </h3>
-                        <div id="classesChart" class="h-64 flex items-end space-x-2">
-                            <!-- Simple CSS bar chart example -->
-                            <div class="w-1/6 chart-bar" style="height: 70%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 90%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 60%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 80%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 50%;"></div>
-                            <div class="w-1/6 chart-bar" style="height: 95%;"></div>
+
+                    <!-- Main Insights Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- User Distribution Card -->
+                        <div
+                            class="bg-card border border-themed rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden h-full">
+                            <div class="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl"></div>
+                            <div class="flex items-center gap-4 mb-8">
+                                <div
+                                    class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-inner">
+                                    <i class="fas fa-chart-pie text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black text-gray-900 dark:text-white leading-tight">Rol
+                                        Tahlili</h3>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Foydalanuvchilar taqsimoti</p>
+                                </div>
+                            </div>
+                            <div id="activeUsersChart" class="space-y-6">
+                                <!-- JS will inject high-fidelity bar/donut visuals here -->
+                            </div>
                         </div>
-                    </div>
-                    <div class="p-6 card-hover rounded-xl lg:col-span-2">
-                        <h3 class="text-xl font-semibold mb-4 text-blue-800 dark:text-white">Oxirgi Faollik</h3>
-                        <div id="recentActivity" class="space-y-3">
-                            <!-- Recent activity list -->
+
+                        <!-- School Pulse / Recent Activity Timeline -->
+                        <div
+                            class="lg:col-span-2 bg-card border border-themed rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden h-full">
+                            <div class="absolute -bottom-12 -left-12 w-40 h-40 bg-purple-500/5 rounded-full blur-3xl">
+                            </div>
+                            <div class="flex items-center justify-between mb-8">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center text-purple-600 dark:text-purple-400 shadow-inner">
+                                        <i class="fas fa-bolt-lightning text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-black text-gray-900 dark:text-white leading-tight">
+                                            School Pulse</h3>
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">So'nggi
+                                            tizim faolligi</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="bg-purple-50 dark:bg-purple-900/20 px-3 py-1 rounded-full text-[10px] font-black text-purple-600 dark:text-purple-400 uppercase tracking-tighter">Live
+                                    Feed</span>
+                            </div>
+                            <!-- Modern Vertical Timeline container -->
+                            <div id="recentActivity"
+                                class="relative pl-6 space-y-6 max-h-[400px] overflow-y-auto pr-4 scrollbar-hidden">
+                                <!-- Timeline items injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Class Distribution / Performance -->
+                        <div
+                            class="lg:col-span-3 bg-card border border-themed rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden">
+                            <div class="flex items-center gap-4 mb-10">
+                                <div
+                                    class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-inner">
+                                    <i class="fas fa-graduation-cap text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black text-gray-900 dark:text-white leading-tight">Sinfiy
+                                        Ko'rsatkichlar</h3>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sinflar
+                                        bo'yicha o'sish dinamikasi</p>
+                                </div>
+                            </div>
+                            <div id="classesChart" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <!-- JS will inject high-fidelity class stat cards here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -271,119 +418,397 @@
             </div>
 
             <!-- Sozlamalar -->
-            <div id="settings" class="tab-content hidden card-hover p-6 rounded-xl">
-                <h2 class="text-2xl font-bold text-blue-800 dark:text-white mb-6">Tizim Sozlamalari</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4 text-blue-800 dark:text-white">Umumiy Sozlamalar</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-gray-600 dark:text-gray-300 mb-2">Sayt Nomi</label>
-                                <input type="text" id="siteName" value="Ingliz Tili Muloqot Portali">
+            <!-- Sozlamalar (Futurist Command Hub Redesign) -->
+            <div id="settings" class="tab-content hidden relative">
+                <div class="space-y-12">
+                    <!-- Command Deck Header -->
+                    <div
+                        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-10 border-b border-themed relative z-10">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span
+                                    class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.5)]"></span>
+                                <h2 class="text-4xl font-black text-gray-900 dark:text-white tracking-tighter">Command
+                                    Hub</h2>
                             </div>
-                            <div>
-                                <label class="block text-gray-600 dark:text-gray-300 mb-2">Maximal Daraja Hajmi</label>
-                                <input type="number" id="maxClassSize" value="25" min="10" max="40">
-                            </div>
-                            <div>
-                                <label class="flex items-center space-x-2">
-                                    <input type="checkbox" id="allowRegistrations"
-                                        class="rounded focus:ring-blue-300 dark:focus:ring-blue-500" checked>
-                                    <span class="text-gray-600 dark:text-gray-300">Yangi ro'yxatdan o'tishlarga ruxsat
-                                        berish</span>
-                                </label>
+                            <p class="text-gray-400 font-bold text-xs uppercase tracking-[0.3em]">Tizimning orbital
+                                boshqaruv markazi</p>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="hidden lg:flex items-center gap-6 px-6 py-3 bg-card border border-themed rounded-2xl shadow-sm">
+                                <div class="text-center">
+                                    <p class="text-[8px] font-black text-gray-400 uppercase">Uptime</p>
+                                    <p class="text-xs font-black text-emerald-500">99.9%</p>
+                                </div>
+                                <div class="w-px h-6 bg-themed"></div>
+                                <div class="text-center">
+                                    <p class="text-[8px] font-black text-gray-400 uppercase">Status</p>
+                                    <p class="text-xs font-black text-blue-500">PROTECTED</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4 text-blue-800 dark:text-white">Coin Tizimi</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-gray-600 dark:text-gray-300 mb-2">Test uchun max coin</label>
-                                <input type="number" id="maxTestCoins" value="20" min="5" max="50">
+                    <!-- Bento Command Grid -->
+                    <div id="settings-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+                        <!-- System Power Card -->
+                        <div onclick="openCommandPanel('system')"
+                            class="power-card group relative overflow-hidden bg-card border border-themed rounded-[2.5rem] p-8 cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(59,130,246,0.15)]">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                             </div>
-                            <div>
-                                <label class="block text-gray-600 dark:text-gray-300 mb-2">Muloqot uchun coin
-                                    (kuniga)</label>
-                                <input type="number" id="attendanceCoins" value="5" min="1" max="10">
+                            <div class="relative z-10">
+                                <div
+                                    class="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 mb-8 shadow-inner transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                                    <i class="fas fa-server text-xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-2">Tizim</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-6">Global
+                                    platforma parametrlari va orbital ma'lumotlar.</p>
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-full text-[9px] font-black text-blue-600 uppercase tracking-tighter">Healthy</span>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-gray-600 dark:text-gray-300 mb-2">Boshlang'ich coin</label>
-                                <input type="number" id="initialCoins" value="100" min="0" max="500">
+                        </div>
+
+                        <!-- Security Power Card -->
+                        <div onclick="openCommandPanel('security')"
+                            class="power-card group relative overflow-hidden bg-card border border-themed rounded-[2.5rem] p-8 cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(244,63,94,0.15)]">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div class="relative z-10">
+                                <div
+                                    class="w-14 h-14 bg-rose-100 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center text-rose-600 mb-8 shadow-inner transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                                    <i class="fas fa-shield-alt text-xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-2">Xavfsizlik</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-6">Protokollar,
+                                    ruxsatnomalar va kirish nazorati.</p>
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="px-3 py-1 bg-rose-50 dark:bg-rose-900/20 rounded-full text-[9px] font-black text-rose-600 uppercase tracking-tighter">Encrypted</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Economy Power Card -->
+                        <div onclick="openCommandPanel('gamification')"
+                            class="power-card group relative overflow-hidden bg-card border border-themed rounded-[2.5rem] p-8 cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(234,179,8,0.15)]">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div class="relative z-10">
+                                <div
+                                    class="w-14 h-14 bg-yellow-100 dark:bg-yellow-900/30 rounded-2xl flex items-center justify-center text-yellow-600 mb-8 shadow-inner transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                                    <i class="fas fa-coins text-xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-2">Iqtisodiyot</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-6">Coin
+                                    generatsiyasi va mukofot tizimi dinamikasi.</p>
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="px-3 py-1 bg-yellow-50 dark:bg-yellow-900/20 rounded-full text-[9px] font-black text-yellow-700 uppercase tracking-tighter">Boosted</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mt-6 pt-6 border-t border-blue-200 dark:border-gray-700">
-                    <button onclick="saveSettings()" class="success mr-4">
-                        <i class="fas fa-save mr-2"></i> Sozlamalarni Saqlash
-                    </button>
-                    <button onclick="resetSystem()" class="danger">
-                        <i class="fas fa-sync-alt mr-2"></i> Tizimni Qayta O'rnatish
-                    </button>
+                    <!-- Immersive Command Panels (Hidden by default) -->
+                    <div id="command-detail-view" class="hidden animate-fade-in space-y-8 relative z-10">
+                        <button onclick="closeCommandPanel()"
+                            class="flex items-center gap-3 px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 text-gray-500 hover:text-blue-600 hover:border-blue-200 dark:hover:border-blue-900/50 hover:shadow-md transition-all mb-6 group w-full sm:w-auto">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700/50 flex items-center justify-center group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-colors">
+                                <i
+                                    class="fas fa-arrow-left text-sm group-hover:-translate-x-1 transition-transform"></i>
+                            </div>
+                            <span class="text-xs font-black uppercase tracking-widest">Markazga Qaytish</span>
+                        </button>
+
+                        <!-- System Detail Panel -->
+                        <div id="panel-system" class="settings-panel space-y-8 hidden">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div
+                                    class="bg-card border border-themed rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden">
+                                    <div
+                                        class="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl">
+                                    </div>
+                                    <h4
+                                        class="text-xl font-black text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+                                        <i class="fas fa-globe-asia text-blue-500"></i> Platforma Identifikatsiyasi
+                                    </h4>
+                                    <div class="space-y-6">
+                                        <div class="space-y-3">
+                                            <label
+                                                class="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Stansiya
+                                                Nomi</label>
+                                            <input type="text" id="siteName"
+                                                class="command-input w-full bg-themed-hover border border-themed rounded-2xl py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+                                        </div>
+                                        <div class="space-y-3">
+                                            <label
+                                                class="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Vaqt
+                                                Mintaqasi</label>
+                                            <select id="timezone"
+                                                class="command-input w-full bg-themed-hover border border-themed rounded-2xl py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 outline-none transition-all appearance-none cursor-pointer">
+                                                <option value="Asia/Tashkent">Asia/Tashkent (GMT+5)</option>
+                                                <option value="UTC">UTC (Universal Time)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="bg-card border border-themed rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden">
+                                    <div
+                                        class="absolute -top-12 -right-12 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl">
+                                    </div>
+                                    <h4
+                                        class="text-xl font-black text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+                                        <i class="fas fa-microchip text-purple-500"></i> Tizim Optimizatsiyasi
+                                    </h4>
+                                    <div class="space-y-6">
+                                        <div class="flex items-center justify-between p-4 bg-themed-hover rounded-2xl">
+                                            <span class="text-sm font-bold">Avtomatik Kesh Tozalash</span>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" class="sr-only peer" checked>
+                                                <div
+                                                    class="w-11 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:bg-purple-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full">
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <button onclick="resetSystem()"
+                                            class="w-full py-4 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all">
+                                            <i class="fas fa-power-off mr-2"></i> Tizimni Reset Qilish
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Security Detail Panel -->
+                        <div id="panel-security" class="settings-panel space-y-8 hidden">
+                            <div class="bg-card border border-themed rounded-[2.5rem] p-10 shadow-xl">
+                                <h4
+                                    class="text-2xl font-black text-gray-900 dark:text-white mb-10 flex items-center gap-4">
+                                    <i class="fas fa-user-shield text-rose-500"></i> Kirish Protokollari
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div
+                                        class="p-6 bg-themed-hover rounded-3xl border border-themed group hover:border-rose-500/30 transition-all">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div
+                                                class="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center text-rose-500 shadow-sm">
+                                                <i class="fas fa-door-open"></i>
+                                            </div>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" id="allowRegistrations" class="sr-only peer"
+                                                    checked>
+                                                <div
+                                                    class="w-14 h-7 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:bg-rose-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:after:translate-x-full">
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <p class="font-black text-gray-800 dark:text-white mb-1">Ochiq Ro'yxatdan o'tish
+                                        </p>
+                                        <p class="text-[10px] text-gray-400 uppercase tracking-tighter">Foydalanuvchilar
+                                            mustaqil registratsiya qilishi</p>
+                                    </div>
+
+                                    <div
+                                        class="p-6 bg-themed-hover rounded-3xl border border-themed group hover:border-blue-500/30 transition-all">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div
+                                                class="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center text-blue-500 shadow-sm">
+                                                <i class="fas fa-user-check"></i>
+                                            </div>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" id="requireTeacherApproval" class="sr-only peer">
+                                                <div
+                                                    class="w-14 h-7 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:after:translate-x-full">
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <p class="font-black text-gray-800 dark:text-white mb-1">Ustozlar
+                                            Avtorizatsiyasi</p>
+                                        <p class="text-[10px] text-gray-400 uppercase tracking-tighter">O'qituvchilar
+                                            uchun admin tasdig'i shart</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Economy Detail Panel -->
+                        <div id="panel-gamification" class="settings-panel space-y-8 hidden">
+                            <div class="bg-card border border-themed rounded-[2.5rem] p-10 shadow-xl">
+                                <h4
+                                    class="text-2xl font-black text-gray-900 dark:text-white mb-10 flex items-center gap-4">
+                                    <i class="fas fa-chart-line text-yellow-500"></i> Coin Emissiyasi
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div
+                                        class="p-8 bg-gradient-to-br from-yellow-500/5 to-transparent border border-themed rounded-3xl text-center">
+                                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">
+                                            Dars Faolligi</p>
+                                        <input type="number" id="maxLessonCoins"
+                                            class="w-20 text-3xl font-black bg-transparent text-center text-yellow-600 outline-none">
+                                        <p class="text-[10px] text-yellow-600/50 font-bold mt-2">Max Koinlar</p>
+                                    </div>
+                                    <div
+                                        class="p-8 bg-gradient-to-br from-emerald-500/5 to-transparent border border-themed rounded-3xl text-center">
+                                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Uy
+                                            Vazifasi</p>
+                                        <input type="number" id="homeworkCoins"
+                                            class="w-20 text-3xl font-black bg-transparent text-center text-emerald-600 outline-none">
+                                        <p class="text-[10px] text-emerald-600/50 font-bold mt-2">Standart Mukofot</p>
+                                    </div>
+                                    <div
+                                        class="p-8 bg-gradient-to-br from-blue-500/5 to-transparent border border-themed rounded-3xl text-center">
+                                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">
+                                            Yangi Foydalanuvchi</p>
+                                        <input type="number" value="100"
+                                            class="w-20 text-3xl font-black bg-transparent text-center text-blue-600 outline-none">
+                                        <p class="text-[10px] text-blue-600/50 font-bold mt-2">Boshlang'ich Kapital</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Action Bar -->
+                    <div id="floating-save-bar"
+                        class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 transform translate-y-32 opacity-0 transition-all duration-500">
+                        <div
+                            class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-8 py-4 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center gap-8 border border-white/10">
+                            <div>
+                                <p class="text-xs font-black uppercase tracking-widest">O'zgarishlar Aniqlindi</p>
+                                <p class="text-[10px] opacity-60">Tizim yangi parametrlarni qabul qilishga tayyor</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="revertAllSettings()"
+                                    class="px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:text-rose-500 transition-colors">Tashlash</button>
+                                <button onclick="saveAllSettings()"
+                                    class="bg-blue-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20">
+                                    <i class="fas fa-check mr-2"></i> Saqlash
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- O'qituvchi Qo'shish Modali -->
+    <!-- O'qituvchi Qo'shish Modali (Upgraded) -->
     <div id="addTeacherModal" class="modal-overlay hidden">
-        <div class="modal-content max-w-2xl">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold flex items-center text-blue-800 dark:text-blue-400">
-                    <i class="fas fa-user-plus mr-3"></i> Yangi O'qituvchi Qo'shish
-                </h2>
+        <div class="modal-content max-w-2xl bg-white dark:bg-gray-900 rounded-[2.5rem] p-10 shadow-2xl">
+            <div class="flex justify-between items-center mb-10">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <i class="fas fa-user-plus text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black text-gray-900 dark:text-white">Yangi Ustoz</h2>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tizimga yangi xodim
+                            qo'shish</p>
+                    </div>
+                </div>
                 <button onclick="closeModal('addTeacherModal')"
-                    class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="fas fa-times text-xl"></i>
+                    class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 transition-all shadow-sm hover:shadow-md">
+                    <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
+
             <form id="addTeacherForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <label><i class="fas fa-id-card mr-2 text-blue-500"></i> Ism Familiya</label>
-                    <input type="text" id="newTeacherName" placeholder="Masalan: Alisher Fayzullayev" required>
+                <div class="space-y-1.5 focus-within:text-blue-600 transition-colors">
+                    <label class="text-[10px] font-black uppercase tracking-widest ml-1 text-gray-400">Ism
+                        Familiya</label>
+                    <div class="relative group">
+                        <i
+                            class="fas fa-signature absolute left-5 top-[50%] -translate-y-1/2 text-gray-400/60 z-20 transition-colors group-focus-within:text-blue-600"></i>
+                        <input type="text" id="newTeacherName" style="padding-left: 3.75rem !important;"
+                            class="w-full pr-4 py-4 rounded-2xl border border-themed bg-gray-50/50 dark:bg-gray-800 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-gray-300"
+                            placeholder="Alisher Fayzullayev" required>
+                    </div>
                 </div>
-                <div class="space-y-2">
-                    <label><i class="fas fa-user mr-2 text-blue-500"></i> Login (Username)</label>
-                    <input type="text" id="newTeacherUsername" placeholder="alisher_teacher" required>
+
+                <div class="space-y-1.5 focus-within:text-blue-600 transition-colors">
+                    <label class="text-[10px] font-black uppercase tracking-widest ml-1 text-gray-400">Username</label>
+                    <div class="relative group">
+                        <i
+                            class="fas fa-at absolute left-5 top-[50%] -translate-y-1/2 text-gray-400/60 z-20 transition-colors group-focus-within:text-blue-600"></i>
+                        <input type="text" id="newTeacherUsername" style="padding-left: 3.75rem !important;"
+                            class="w-full pr-4 py-4 rounded-2xl border border-themed bg-gray-50/50 dark:bg-gray-800 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-gray-300"
+                            placeholder="alisher_teacher" required>
+                    </div>
                 </div>
-                <div class="space-y-2">
-                    <label><i class="fas fa-lock mr-2 text-blue-500"></i> Parol</label>
-                    <input type="password" id="newTeacherPassword" placeholder="••••••••" required>
+
+                <div class="space-y-1.5 focus-within:text-blue-600 transition-colors">
+                    <label class="text-[10px] font-black uppercase tracking-widest ml-1 text-gray-400">Tizim
+                        Paroli</label>
+                    <div class="relative group">
+                        <i
+                            class="fas fa-lock absolute left-5 top-[50%] -translate-y-1/2 text-gray-400/60 z-20 transition-colors group-focus-within:text-blue-600"></i>
+                        <input type="password" id="newTeacherPassword" style="padding-left: 3.75rem !important;"
+                            class="w-full pr-4 py-4 rounded-2xl border border-themed bg-gray-50/50 dark:bg-gray-800 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-gray-300"
+                            placeholder="••••••••" required>
+                    </div>
                 </div>
-                <div class="space-y-2">
-                    <label><i class="fas fa-book mr-2 text-blue-500"></i> Biriktirilgan Fan</label>
-                    <select id="newTeacherSubject">
-                        <option value="conversation">Conversation</option>
-                        <option value="grammar">Grammar</option>
-                        <option value="vocabulary">Vocabulary</option>
-                        <option value="listening">Listening</option>
-                        <option value="reading">Reading</option>
-                        <option value="writing">Writing</option>
-                    </select>
+
+                <div class="space-y-1.5 focus-within:text-blue-600 transition-colors">
+                    <label
+                        class="text-[10px] font-black uppercase tracking-widest ml-1 text-gray-400">Mutaxassislik</label>
+                    <div class="relative group">
+                        <i
+                            class="fas fa-book absolute left-5 top-[50%] -translate-y-1/2 text-gray-400/60 z-20 transition-colors group-focus-within:text-blue-600"></i>
+                        <select id="newTeacherSubject" style="padding-left: 3.75rem !important;"
+                            class="w-full pr-4 py-4 rounded-2xl border border-themed bg-gray-50/50 dark:bg-gray-800 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none appearance-none transition-all relative z-10">
+                            <option value="algebra">Algebra</option>
+                            <option value="geometry">Geometriya</option>
+                            <option value="history">Tarix</option>
+                            <option value="biology">Biologiya</option>
+                            <option value="chemistry">Kimyo</option>
+                            <option value="physics">Fizika</option>
+                        </select>
+                        <i
+                            class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none text-[10px] z-20"></i>
+                    </div>
                 </div>
-                <div class="space-y-2 md:col-span-2">
-                    <label><i class="fas fa-users mr-2 text-blue-500"></i> Sinf / Guruh</label>
-                    <select id="newTeacherClass">
-                        <!-- JS orqali to'ldiriladi -->
-                    </select>
+
+                <div class="space-y-1.5 md:col-span-2 focus-within:text-blue-600 transition-colors">
+                    <label class="text-[10px] font-black uppercase tracking-widest ml-1 text-gray-400">Sinf
+                        Rahbarlik</label>
+                    <div class="relative group">
+                        <i
+                            class="fas fa-graduation-cap absolute left-5 top-[50%] -translate-y-1/2 text-gray-400/60 z-20 transition-colors group-focus-within:text-blue-600"></i>
+                        <select id="newTeacherClass" style="padding-left: 3.75rem !important;"
+                            class="w-full pr-4 py-4 rounded-2xl border border-themed bg-gray-50/50 dark:bg-gray-800 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none appearance-none transition-all relative z-10">
+                            <!-- JS orqali to'ldiriladi -->
+                        </select>
+                        <i
+                            class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none text-[10px] z-20"></i>
+                    </div>
                 </div>
-                <div class="flex space-x-4 pt-6 md:col-span-2">
+
+                <div class="flex gap-4 pt-6 md:col-span-2">
                     <button type="button" onclick="closeModal('addTeacherModal')"
-                        class="flex-1 py-3.5 px-6 rounded-xl border border-gray-200 dark:border-gray-700 font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-gray-600 dark:text-gray-300">
+                        class="flex-1 py-4 px-6 rounded-2xl border border-themed font-black text-[10px] uppercase tracking-widest text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all active:scale-95">
                         Bekor Qilish
                     </button>
                     <button type="submit"
-                        class="flex-1 py-3.5 px-6 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 transition-all active:scale-95">
-                        Tizimga Qo'shish
+                        class="flex-[2] py-4 px-6 rounded-2xl bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 shadow-xl shadow-blue-500/30 transition-all active:scale-95">
+                        Ustozni Ro'yxatdan O'tkazish
                     </button>
                 </div>
             </form>
         </div>
     </div>
-    <!-- Add Event Modal -->
+    <!-- Tadbir Qo'shish Modali (Upgraded) -->
     <div id="addEventModal" class="modal-overlay hidden">
         <div class="modal-content max-w-4xl">
             <div class="flex justify-between items-center mb-8">
@@ -391,8 +816,8 @@
                     <i class="fas fa-magic mr-3"></i> Yangi Tadbir Yaratish
                 </h2>
                 <button onclick="closeModal('addEventModal')"
-                    class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="fas fa-times text-xl"></i>
+                    class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 transition-all shadow-sm hover:shadow-md">
+                    <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
             <form id="addEventForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -441,8 +866,8 @@
                     <i class="fas fa-user-edit mr-3"></i> Foydalanuvchini Tahrirlash
                 </h2>
                 <button onclick="closeModal('editUserModal')"
-                    class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="fas fa-times text-xl"></i>
+                    class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 transition-all shadow-sm hover:shadow-md">
+                    <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
             <form id="editUserForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -495,8 +920,8 @@
                     <i class="fas fa-edit mr-3"></i> Tadbirni Tahrirlash
                 </h2>
                 <button onclick="closeModal('editEventModal')"
-                    class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="fas fa-times text-xl"></i>
+                    class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 transition-all shadow-sm hover:shadow-md">
+                    <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
             <form id="editEventForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">

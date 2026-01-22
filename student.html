@@ -57,7 +57,7 @@
             <div class="card-hover p-4 flex items-center justify-between">
                 <div>
                     <p class="text-muted text-sm">O'rtacha baho</p>
-                    <p id="averageGrade" class="text-lg font-bold">0</p>
+                    <p id="averageGrade" class="text-lg font-bold">{ mark}</p>
                 </div>
                 <span class="text-2xl">📊</span>
             </div>
@@ -105,41 +105,41 @@
 
         <!-- Tabs -->
         <div class="mb-6">
-            <div class="card-hover p-2 overflow-x-auto">
+            <div class="card-hover p-2 flex flex-nowrap gap-2 overflow-x-auto">
                 <button onclick="showTab('videos')"
-                    class="tab-btn flex-none py-2 px-3 rounded-lg bg-blue-600 text-white text-sm">
+                    class="tab-btn flex-none py-2 px-3 rounded-lg bg-blue-600 text-white text-sm whitespace-nowrap">
                     📹 Video Darsliklar
                 </button>
                 <button onclick="showTab('videoLessons')"
-                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm whitespace-nowrap">
                     🎥 Jonli Darslar
                 </button>
                 <button onclick="showTab('tests')"
-                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm whitespace-nowrap">
                     📝 Testlar
                 </button>
                 <button onclick="showTab('homework')"
-                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm whitespace-nowrap">
                     📚 Uy Vazifalari
                 </button>
                 <button onclick="showTab('diary')"
-                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm whitespace-nowrap">
                     📅 Kundalik
                 </button>
                 <button onclick="showTab('ranking')"
-                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm whitespace-nowrap">
                     🏆 Reyting
                 </button>
                 <button onclick="showTab('shop')"
-                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm whitespace-nowrap">
                     🛍️ Do'kon
                 </button>
                 <button onclick="showTab('profile')"
-                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm whitespace-nowrap">
                     👤 Profil
                 </button>
                 <button onclick="showTab('events')"
-                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm">
+                    class="tab-btn flex-none py-2 px-3 rounded-lg text-gray-300 hover:text-white text-sm whitespace-nowrap">
                     ✨ Tadbirlar
                 </button>
             </div>
@@ -164,7 +164,7 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center space-x-3 overflow-x-auto pb-4 no-scrollbar px-1">
+                        <div class="flex items-center space-x-3 overflow-x-auto py-4 no-scrollbar px-1">
                             <button onclick="filterVideos('all')"
                                 class="filter-btn active-filter px-6 py-3 rounded-2xl text-sm font-black whitespace-nowrap transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-500/30 flex items-center gap-2">
                                 <i class="fas fa-layer-group"></i> Barcha Fanlar
@@ -390,20 +390,46 @@
                 </div>
             </div>
 
-            <!-- Do'kon -->
-            <div id="shop" class="tab-content hidden">
-                <h2 class="text-lg font-semibold mb-4">Do'kon</h2>
-                <div class="flex items-center space-x-2 mb-4 p-2 bg-yellow-900/50 rounded-lg">
-                    <span class="text-xl">🪙</span>
-                    <div>
-                        <p class="font-medium text-sm">Sizning coinlaringiz: <span id="shopCoinBalance"
-                                class="text-yellow-400">0</span></p>
-                        <p class="text-xs text-yellow-200">Testlarni topshirish va darslarda faol qatnashish orqali coin
-                            yuting!</p>
+            <!-- Do'kon (Redesigned) -->
+            <div id="shop" class="tab-content hidden text-center">
+                <!-- Coin Vault Hero Section -->
+                <div
+                    class="relative overflow-hidden bg-gradient-to-br from-yellow-400 to-amber-600 rounded-[3rem] p-10 md:p-16 mb-12 shadow-2xl shadow-yellow-500/20 group">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl group-hover:bg-white/30 transition-all">
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center">
+                        <div
+                            class="w-24 h-24 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-white/30 animate-pulse">
+                            <i class="fas fa-coins text-5xl text-white"></i>
+                        </div>
+                        <h2 class="text-white text-sm font-black uppercase tracking-[0.3em] mb-2 opacity-80">Sizning
+                            Balansingiz</h2>
+                        <div class="flex items-center gap-3">
+                            <span class="text-6xl md:text-7xl font-black text-white" id="shopCoinBalance">0</span>
+                            <span class="text-2xl text-yellow-200 mt-4">🪙</span>
+                        </div>
+                        <p class="text-yellow-100/70 text-sm mt-6 max-w-md font-medium">
+                            Darslardagi faollik, uy vazifalar va testlarni muvaffaqiyatli topshirish orqali ko'proq
+                            coinlar to'plang!
+                        </p>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="shopItems">
-                    <!-- Do'kon mahsulotlari JavaScript orqali yuklanadi -->
+
+                <!-- Collection Header -->
+                <div class="flex items-center justify-between mb-8 px-4">
+                    <h3 class="text-2xl font-black text-gray-800 dark:text-white">Maxsus To'plam</h3>
+                    <div
+                        class="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl text-xs font-black uppercase tracking-widest">
+                        <i class="fas fa-star text-[10px]"></i>
+                        Yangi narsalar
+                    </div>
+                </div>
+
+                <!-- Premium Item Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="shopItems">
+                    <!-- JavaScript will inject high-fidelity item cards here -->
+                    <div class="col-span-full py-20 text-gray-400 italic">Do'kon yangilanmoqda...</div>
                 </div>
             </div>
 
@@ -589,13 +615,39 @@
                 </div>
             </div>
 
-            <!-- Tadbirlar -->
+            <!-- Tadbirlar (Redesigned) -->
             <div id="events" class="tab-content hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-main">Dam olish kunlari uchun tadbirlar</h2>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                    <div>
+                        <h2 class="text-4xl font-black text-gray-900 dark:text-white mb-2">Maktab Hayoti</h2>
+                        <p class="text-gray-500 dark:text-gray-400">Dam olish kunlari va darsdan tashqari qiziqarli
+                            tadbirlar</p>
+                    </div>
+                    <div
+                        class="flex items-center gap-4 bg-white dark:bg-gray-800 p-2 rounded-[2rem] border border-themed shadow-sm">
+                        <div class="flex -space-x-3 px-2">
+                            <div
+                                class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-800 bg-blue-500 flex items-center justify-center text-[10px] font-bold text-white">
+                                AS</div>
+                            <div
+                                class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-800 bg-emerald-500 flex items-center justify-center text-[10px] font-bold text-white">
+                                KM</div>
+                            <div
+                                class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-800 bg-amber-500 flex items-center justify-center text-[10px] font-bold text-white">
+                                RJ</div>
+                        </div>
+                        <div class="pr-6">
+                            <span class="block text-sm font-black text-gray-800 dark:text-white line-height-1">40+
+                                O'quvchi</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Faol
+                                ishtirokda</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="studentEventsGrid">
-                    <!-- Tadbirlar JavaScript orqali yuklanadi -->
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" id="studentEventsGrid">
+                    <!-- JavaScript will inject high-fidelity event cards here -->
+                    <div class="col-span-full py-20 text-center text-gray-400 italic">Tadbirlar yuklanmoqda...</div>
                 </div>
             </div>
         </div>
@@ -607,7 +659,9 @@
             <div class="flex justify-between items-center mb-6">
                 <h3 id="testTitle" class="text-xl font-bold"></h3>
                 <button onclick="closeModal('testModal')"
-                    class="text-muted hover:text-main text-2xl transition-colors">✕</button>
+                    class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 transition-all shadow-sm hover:shadow-md">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
             </div>
             <div id="testQuestions" class="space-y-2 max-h-64 overflow-y-auto">
                 <!-- Test savollari JavaScript orqali yuklanadi -->

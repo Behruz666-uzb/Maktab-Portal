@@ -73,7 +73,7 @@ function loadAdminData() {
     const user = getCurrentUser();
 
     document.getElementById('userName').textContent = user.name;
-    document.getElementById('coinBalance').textContent = user.coins;
+    // Coin balance removed for admin - admins don't have personal coins
 
     if (user.avatar) {
         document.getElementById('userAvatar').src = user.avatar;
@@ -131,10 +131,13 @@ function loadUsers() {
                 </td>
                 <td class="p-3">${user.class ? getClassName(user.class) : '-'}</td>
                 <td class="p-3">
-                    <div class="flex items-center space-x-1">
-                        <span>🪙</span>
-                        <span>${user.coins || 0}</span>
-                    </div>
+                    ${user.role === 'admin' ?
+                '<span class="text-gray-400">-</span>' :
+                `<div class="flex items-center space-x-1">
+                            <span>🪙</span>
+                            <span>${user.coins || 0}</span>
+                        </div>`
+            }
                 </td>
                 <td class="p-3">
                     <div class="flex space-x-2">
@@ -148,7 +151,7 @@ function loadUsers() {
                         </button>
                         ${user.role !== 'admin' ? `
                         <button onclick="impersonateUser(${user.id})" 
-                                class="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded text-sm transition-colors">
+                                class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm transition-colors">
                             Kirish
                         </button>
                         ` : ''}
@@ -219,73 +222,119 @@ function showParticipants(lessonId) {
 
 function loadTeachers() {
     const users = JSON.parse(localStorage.getItem('users')) || [];
+    const classes = JSON.parse(localStorage.getItem('classes')) || [];
+    const videoLessons = JSON.parse(localStorage.getItem('videoLessons')) || [];
     const teachers = users.filter(u => u.role === 'teacher');
+
+    // Header Stats
+    const dirTotal = document.getElementById('dirTotalTeachers');
+    const dirLive = document.getElementById('dirActiveLessons');
     const container = document.getElementById('teachersList');
+
+    if (dirTotal) dirTotal.textContent = teachers.length;
+    if (dirLive) dirLive.textContent = videoLessons.filter(v => v.isActive).length;
+    if (!container) return;
+
     container.innerHTML = '';
 
     if (teachers.length === 0) {
-        container.innerHTML = '<p class="text-gray-400 text-center py-4">Hozircha o\'qituvchilar mavjud emas</p>';
+        container.innerHTML = `
+            <div class="col-span-full py-20 bg-card border border-dashed border-themed rounded-[2.5rem] flex flex-col items-center justify-center text-center px-6">
+                <div class="w-24 h-24 bg-gray-50 dark:bg-gray-800 rounded-[2rem] flex items-center justify-center text-4xl mb-6 grayscale opacity-30">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h4 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Hozircha Ustozlar Yo'q</h4>
+                <p class="text-gray-500 text-sm max-w-sm">Maktab tizimiga yangi ustozlarni qo'shish uchun "Ustoz Qo'shish" tugmasini bosing.</p>
+            </div>
+        `;
         return;
     }
 
-    // O'qituvchilar ro'yxatini yangilash
-    const teacherSelect = document.getElementById('newClassTeacher');
-    if (teacherSelect) {
-        teacherSelect.innerHTML = '<option value="">Sinf rahbarisiz</option>';
-    }
+    const subjectConfig = {
+        algebra: { icon: 'fa-calculator', color: 'text-indigo-500', bg: 'bg-indigo-500/10', glow: 'shadow-indigo-500/20' },
+        geometry: { icon: 'fa-drafting-compass', color: 'text-rose-500', bg: 'bg-rose-500/10', glow: 'shadow-rose-500/20' },
+        history: { icon: 'fa-landmark', color: 'text-amber-600', bg: 'bg-amber-600/10', glow: 'shadow-amber-500/20' },
+        biology: { icon: 'fa-dna', color: 'text-emerald-500', bg: 'bg-emerald-500/10', glow: 'shadow-emerald-500/20' },
+        chemistry: { icon: 'fa-flask', color: 'text-purple-500', bg: 'bg-purple-500/10', glow: 'shadow-purple-500/20' },
+        physics: { icon: 'fa-atom', color: 'text-blue-500', bg: 'bg-blue-500/10', glow: 'shadow-blue-500/20' }
+    };
 
     teachers.forEach(teacher => {
+        const config = subjectConfig[teacher.subject] || subjectConfig.algebra;
+        const isLive = videoLessons.some(v => v.isActive && v.teacherId === teacher.id);
+        const teacherClass = classes.find(c => c.id === teacher.class);
+
         const teacherCard = `
-            <div class="flex items-center justify-between p-4 bg-card border border-themed rounded-lg shadow-sm">
-                <div class="flex items-center space-x-4">
-                    ${teacher.avatar ?
-                `<img src="${teacher.avatar}" class="w-12 h-12 rounded-full">` :
-                '<div class="w-12 h-12 rounded-full bg-themed-hover flex items-center justify-center">👤</div>'
-            }
-                    <div>
-                        <h4 class="font-semibold">${teacher.name}</h4>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">
-                            ${teacher.subject ? getSubjectName(teacher.subject) : 'Fan belgilanmagan'} | 
-                            ${teacher.class ? getClassName(teacher.class) : 'Sinf belgilanmagan'}
-                        </p>
+            <div class="group relative bg-card border border-themed rounded-[2.5rem] p-8 transition-all duration-300 hover:shadow-2xl ${config.glow} flex flex-col h-full border-t-4 ${isLive ? 'border-t-emerald-500' : 'border-t-blue-500'}">
+                <!-- Status Badge -->
+                <div class="absolute top-4 right-8">
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-800 border border-themed shadow-xl">
+                        <div class="w-2 h-2 rounded-full ${isLive ? 'bg-emerald-500 animate-pulse' : 'bg-gray-300'}"></div>
+                        <span class="text-[8px] font-black uppercase tracking-widest ${isLive ? 'text-emerald-500' : 'text-gray-400'}">
+                            ${isLive ? 'Jonli Darsda' : 'Oflayn'}
+                        </span>
                     </div>
                 </div>
-                <div class="flex space-x-2">
+
+                <!-- Profile Header -->
+                <div class="flex items-center gap-6 mb-8">
+                    <div class="relative">
+                        <div class="w-20 h-20 rounded-[2rem] border-4 border-white dark:border-gray-800 overflow-hidden shadow-2xl transition-transform group-hover:scale-110">
+                            <img src="${teacher.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(teacher.name) + '&background=random'}" 
+                                 class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl ${config.bg} ${config.color} flex items-center justify-center shadow-lg backdrop-blur-md border border-white/20">
+                            <i class="fas ${config.icon} text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-xl font-black text-gray-800 dark:text-white line-clamp-1 group-hover:text-blue-600 transition-colors">${teacher.name}</h4>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">${getSubjectName(teacher.subject)} Mutaxassisi</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Grid -->
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-2xl border border-themed">
+                        <span class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Biriktirilgan Sinf</span>
+                        <span class="text-sm font-black text-gray-700 dark:text-gray-200">${teacherClass ? teacherClass.name : 'Mavjud emas'}</span>
+                    </div>
+                    <div class="p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-2xl border border-themed">
+                        <span class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Id Raqami</span>
+                        <span class="text-sm font-black text-gray-700 dark:text-gray-200">#${teacher.id.toString().slice(-4)}</span>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="flex gap-3 mt-auto">
                     <button onclick="editUser(${teacher.id})" 
-                            class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition-colors text-white">
-                        Tahrirlash
+                            class="flex-1 py-4 px-4 bg-white dark:bg-gray-800 border border-themed rounded-2xl font-black text-[10px] uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm">
+                        <i class="fas fa-edit text-blue-500"></i> Tahrirlash
                     </button>
                     <button onclick="deleteUser(${teacher.id})" 
-                            class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition-colors text-white">
-                        O'chirish
+                            class="flex-1 py-4 px-4 bg-white dark:bg-gray-800 border border-themed rounded-2xl font-black text-[10px] uppercase tracking-widest text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm">
+                        <i class="fas fa-trash"></i> O'chirish
                     </button>
                 </div>
             </div>
         `;
 
         container.innerHTML += teacherCard;
-
-        container.innerHTML += teacherCard;
-
-        // Select uchun option qo'shish (agar mavjud bo'lsa)
-        if (teacherSelect) {
-            const option = document.createElement('option');
-            option.value = teacher.id;
-            option.textContent = `${teacher.name} (${teacher.subject ? getSubjectName(teacher.subject) : 'Noma\'lum'})`;
-            teacherSelect.appendChild(option);
-        }
     });
 
-    // O'qituvchi qo'shish modal uchun sinflar ro'yxati
+    // Modal sinflar ro'yxatini to'ldirish (agar mavjud bo'lsa)
     const classSelect = document.getElementById('newTeacherClass');
-    const classes = JSON.parse(localStorage.getItem('classes')) || [];
-    classSelect.innerHTML = '<option value="">Sinf tanlanmagan</option>';
-    classes.forEach(cls => {
-        const option = document.createElement('option');
-        option.value = cls.id;
-        option.textContent = cls.name;
-        classSelect.appendChild(option);
-    });
+    if (classSelect) {
+        classSelect.innerHTML = '<option value="">Sinf tanlanmagan</option>';
+        classes.forEach(cls => {
+            const option = document.createElement('option');
+            option.value = cls.id;
+            option.textContent = cls.name;
+            classSelect.appendChild(option);
+        });
+    }
 }
 
 // function loadClasses() is no longer used since 'Darajalar' was replaced by 'Eventlar'
@@ -295,116 +344,115 @@ function loadAnalytics() {
     const classes = JSON.parse(localStorage.getItem('classes')) || [];
     const videoLessons = JSON.parse(localStorage.getItem('videoLessons')) || [];
 
-    // Faol foydalanuvchilar chart
+    // 1. Role Distribution (Role Tahlili)
     const activeUsersChart = document.getElementById('activeUsersChart');
-    const studentCount = users.filter(u => u.role === 'student').length;
-    const teacherCount = users.filter(u => u.role === 'teacher').length;
-    const adminCount = users.filter(u => u.role === 'admin').length;
+    if (activeUsersChart) {
+        const studentCount = users.filter(u => u.role === 'student').length;
+        const teacherCount = users.filter(u => u.role === 'teacher').length;
+        const adminCount = users.filter(u => u.role === 'admin').length;
+        const total = users.length || 1;
 
-    activeUsersChart.innerHTML = `
-        <div class="space-y-3">
-            <div class="flex justify-between items-center">
-                <span class="text-gray-500 dark:text-gray-400">O'quvchilar</span>
-                <div class="flex items-center space-x-2">
-                    <div class="w-20 bg-themed-hover rounded-full h-3">
-                        <div class="bg-blue-600 h-3 rounded-full" 
-                             style="width: ${(studentCount / users.length) * 100}%"></div>
+        const roles = [
+            { label: 'O\'quvchilar', count: studentCount, color: 'from-blue-500 to-indigo-600', icon: 'fa-user-graduate', bgColor: 'bg-blue-500/10' },
+            { label: 'O\'qituvchilar', count: teacherCount, color: 'from-emerald-500 to-teal-600', icon: 'fa-chalkboard-teacher', bgColor: 'bg-emerald-500/10' },
+            { label: 'Adminlar', count: adminCount, color: 'from-rose-500 to-pink-600', icon: 'fa-user-shield', bgColor: 'bg-rose-500/10' }
+        ];
+
+        activeUsersChart.innerHTML = roles.map(role => `
+            <div class="group">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-lg ${role.bgColor} text-[10px] flex items-center justify-center text-current opacity-70 group-hover:opacity-100 transition-opacity">
+                            <i class="fas ${role.icon}"></i>
+                        </div>
+                        <span class="text-xs font-black text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors uppercase tracking-widest">${role.label}</span>
                     </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">${studentCount}</span>
+                    <span class="text-sm font-black text-gray-900 dark:text-white">${role.count}</span>
+                </div>
+                <div class="h-2.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner">
+                    <div class="h-full bg-gradient-to-r ${role.color} rounded-full transition-all duration-1000" 
+                         style="width: ${(role.count / total) * 100}%"></div>
                 </div>
             </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-500 dark:text-gray-400">O'qituvchilar</span>
-                <div class="flex items-center space-x-2">
-                    <div class="w-20 bg-themed-hover rounded-full h-3">
-                        <div class="bg-green-600 h-3 rounded-full" 
-                             style="width: ${(teacherCount / users.length) * 100}%"></div>
-                    </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">${teacherCount}</span>
-                </div>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-500 dark:text-gray-400">Adminlar</span>
-                <div class="flex items-center space-x-2">
-                    <div class="w-20 bg-themed-hover rounded-full h-3">
-                        <div class="bg-red-600 h-3 rounded-full" 
-                             style="width: ${(adminCount / users.length) * 100}%"></div>
-                    </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">${adminCount}</span>
-                </div>
-            </div>
-        </div>
-    `;
+        `).join('');
+    }
 
-
-    // Sinflar chart
+    // 2. Class Performance (Sinfiy Ko'rsatkichlar)
     const classesChart = document.getElementById('classesChart');
-    let classesHtml = '<div class="space-y-3">';
+    if (classesChart) {
+        classesChart.innerHTML = '';
+        classes.forEach(cls => {
+            const classStudents = users.filter(u => u.role === 'student' && u.class === cls.id);
+            const percent = Math.min(((classStudents.length / cls.capacity) * 100), 100).toFixed(0);
 
-    classes.forEach(cls => {
-        const classStudents = users.filter(u => u.role === 'student' && u.class === cls.id);
-        const percent = (classStudents.length / cls.capacity) * 100;
-
-        classesHtml += `
-            <div class="flex justify-between items-center">
-                <span class="text-gray-500 dark:text-gray-400">${cls.name}</span>
-                <div class="flex items-center space-x-2">
-                    <div class="w-16 bg-themed-hover rounded-full h-3">
-                        <div class="bg-purple-600 h-3 rounded-full" 
-                             style="width: ${percent}%"></div>
+            classesChart.innerHTML += `
+                <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-themed border-dashed rounded-3xl p-5 hover:border-emerald-500/50 transition-all">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span class="block text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Sinf</span>
+                            <h4 class="text-xl font-black text-gray-900 dark:text-white">${cls.name}</h4>
+                        </div>
+                        <div class="w-10 h-10 rounded-full border-2 border-emerald-500/20 flex items-center justify-center text-[10px] font-black text-emerald-500">
+                            ${percent}%
+                        </div>
                     </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">${classStudents.length}</span>
+                    <div class="flex items-center justify-between text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                        <span>Sig'im: ${cls.capacity}</span>
+                        <span class="text-emerald-500">${classStudents.length} o'quvchi</span>
+                    </div>
                 </div>
-            </div>
+            `;
+        });
+    }
 
-        `;
-    });
-
-    classesHtml += '</div>';
-    classesChart.innerHTML = classesHtml;
-
-    // Oxirgi faollik
+    // 3. School Pulse (Oxirgi Faollik Timeline)
     const recentActivity = document.getElementById('recentActivity');
-    const activities = [];
+    if (recentActivity) {
+        const activities = [];
 
-    // Video darslar faolligi
-    const recentVideoLessons = videoLessons
-        .filter(v => v.isActive)
-        .slice(-3)
-        .map(lesson => ({
-            action: `Video dars: ${lesson.title}`,
-            time: new Date(lesson.startTime).toLocaleTimeString(),
-            type: 'video'
-        }));
+        // Live Lessons
+        videoLessons.filter(v => v.isActive).slice(-5).forEach(lesson => {
+            activities.push({
+                title: 'Jonli Dars Boshlandi',
+                desc: `${lesson.title} fani bo'yicha dars hozirda faol`,
+                time: new Date(lesson.startTime).toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' }),
+                icon: 'fa-video',
+                color: 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400',
+                meta: 'Live Now'
+            });
+        });
 
-    activities.push(...recentVideoLessons);
+        // Add dummy data if needed to populate the pulse
+        activities.push(
+            { title: 'Yangi Test Yaratildi', desc: 'Algebra fani bo\'yicha yakuniy nazorat testi sistemaning markaziga yuklandi.', time: '10:45', icon: 'fa-file-invoice', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400', meta: 'Homework' },
+            { title: 'Reyting Yangilandi', desc: 'Haftalik o\'quvchilar reytingi avtomatik tarzda qayta hisoblandi va e\'lon qilindi.', time: '09:30', icon: 'fa-trophy', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400', meta: 'Updates' },
+            { title: 'Tizimga Kirish', desc: 'Administrator tomonidan tizimga yangi o\'qituvchi profil qo\'shildi va tasdiqlandi.', time: '08:15', icon: 'fa-user-plus', color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400', meta: 'Security' }
+        );
 
-    // Qo'shimcha faolliklar
-    activities.push(
-        { action: 'Yangi foydalanuvchi qo\'shildi', time: '5 daqiqa oldin', type: 'user' },
-        { action: 'Test yaratildi', time: '1 soat oldin', type: 'test' },
-        { action: 'Davomat saqlandi', time: '2 soat oldin', type: 'attendance' }
-    );
-
-    recentActivity.innerHTML = activities.map(activity => `
-        <div class="flex items-center justify-between p-3 bg-card border border-themed rounded-lg shadow-sm">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-full flex items-center justify-center text-white ${activity.type === 'user' ? 'bg-blue-600' :
-            activity.type === 'video' ? 'bg-purple-600' : 'bg-themed-hover'
-        }">
-                    ${activity.type === 'user' ? '👤' :
-            activity.type === 'test' ? '🧪' :
-                activity.type === 'attendance' ? '✅' :
-                    activity.type === 'video' ? '🎥' : '📊'}
+        recentActivity.innerHTML = `
+            <div class="absolute left-[7px] top-2 bottom-6 w-0.5 bg-themed"></div>
+            ${activities.map(activity => `
+                <div class="relative pl-8 group">
+                    <div class="absolute left-[-4px] top-1 w-4 h-4 rounded-full border-4 border-white dark:border-gray-900 bg-themed group-hover:scale-125 group-hover:bg-purple-500 transition-all z-10"></div>
+                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-themed rounded-2xl p-4 group-hover:shadow-lg transition-all">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg ${activity.color} flex items-center justify-center text-xs">
+                                    <i class="fas ${activity.icon}"></i>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-black text-gray-900 dark:text-white">${activity.title}</h5>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${activity.meta}</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-black text-gray-400">${activity.time}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">${activity.desc}</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="font-medium">${activity.action}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">${activity.time}</p>
-                </div>
-            </div>
-        </div>
-    `).join('');
-
+            `).join('')}
+        `;
+    }
 }
 
 // Modal funksiyalari
@@ -667,18 +715,99 @@ function exportUsers() {
     showNotification('Foydalanuvchilar ro\'yxati yuklab olindi!', 'success');
 }
 
-function saveSettings() {
+function openCommandPanel(panelName) {
+    // Hide grid
+    const grid = document.getElementById('settings-grid');
+    if (grid) grid.classList.add('hidden');
+
+    // Show detail view
+    const detailView = document.getElementById('command-detail-view');
+    if (detailView) detailView.classList.remove('hidden');
+
+    // Show specific panel
+    document.querySelectorAll('.settings-panel').forEach(p => p.classList.add('hidden'));
+    const targetPanel = document.getElementById(`panel-${panelName}`);
+    if (targetPanel) targetPanel.classList.remove('hidden');
+
+    // Initialize dirty check if not already done
+    initSettingsDirtyCheck();
+}
+
+function closeCommandPanel() {
+    // Hide detail view
+    const detailView = document.getElementById('command-detail-view');
+    if (detailView) detailView.classList.add('hidden');
+
+    // Show grid
+    const grid = document.getElementById('settings-grid');
+    if (grid) grid.classList.remove('hidden');
+}
+
+function initSettingsDirtyCheck() {
+    const inputs = document.querySelectorAll('#settings input, #settings select');
+    inputs.forEach(input => {
+        if (!input.dataset.listener) {
+            input.addEventListener('input', () => {
+                showFloatingSaveBar(true);
+            });
+            input.dataset.listener = "true";
+        }
+    });
+}
+
+function showFloatingSaveBar(show) {
+    const bar = document.getElementById('floating-save-bar');
+    if (!bar) return;
+
+    if (show) {
+        bar.classList.remove('translate-y-32', 'opacity-0');
+        bar.classList.add('translate-y-0', 'opacity-100');
+    } else {
+        bar.classList.add('translate-y-32', 'opacity-0');
+        bar.classList.remove('translate-y-0', 'opacity-100');
+    }
+}
+
+function saveAllSettings() {
     const settings = {
         siteName: document.getElementById('siteName').value,
-        maxClassSize: parseInt(document.getElementById('maxClassSize').value),
+        timezone: document.getElementById('timezone').value,
         allowRegistrations: document.getElementById('allowRegistrations').checked,
-        maxTestCoins: parseInt(document.getElementById('maxTestCoins').value),
-        attendanceCoins: parseInt(document.getElementById('attendanceCoins').value),
-        initialCoins: parseInt(document.getElementById('initialCoins').value)
+        requireTeacherApproval: document.getElementById('requireTeacherApproval').checked,
+        maxLessonCoins: parseInt(document.getElementById('maxLessonCoins').value),
+        homeworkCoins: parseInt(document.getElementById('homeworkCoins').value)
     };
 
     localStorage.setItem('settings', JSON.stringify(settings));
-    showNotification('Sozlamalar saqlandi!', 'success');
+    showNotification('Tizim parametrlari muvaffaqiyatli yangilandi!', 'success');
+
+    // Hide bar
+    showFloatingSaveBar(false);
+}
+
+function loadAllSettings() {
+    const settings = JSON.parse(localStorage.getItem('settings')) || {
+        siteName: 'Maktab Portali V2',
+        timezone: 'Asia/Tashkent',
+        allowRegistrations: true,
+        requireTeacherApproval: false,
+        maxLessonCoins: 10,
+        homeworkCoins: 5
+    };
+
+    if (document.getElementById('siteName')) document.getElementById('siteName').value = settings.siteName;
+    if (document.getElementById('timezone')) document.getElementById('timezone').value = settings.timezone;
+    if (document.getElementById('allowRegistrations')) document.getElementById('allowRegistrations').checked = settings.allowRegistrations;
+    if (document.getElementById('requireTeacherApproval')) document.getElementById('requireTeacherApproval').checked = settings.requireTeacherApproval;
+    if (document.getElementById('maxLessonCoins')) document.getElementById('maxLessonCoins').value = settings.maxLessonCoins;
+    if (document.getElementById('homeworkCoins')) document.getElementById('homeworkCoins').value = settings.homeworkCoins;
+}
+
+function revertAllSettings() {
+    if (confirm('Barcha o\'zgarishlarni bekor qilmoqchimisiz?')) {
+        loadAllSettings();
+        showFloatingSaveBar(false);
+    }
 }
 
 function resetSystem() {
@@ -732,60 +861,123 @@ function showTab(tabName) {
         loadGeneralSchedule();
     } else if (tabName === 'events') {
         loadEvents();
+    } else if (tabName === 'settings') {
+        loadAllSettings();
     }
 }
 
 function loadEvents() {
     const events = JSON.parse(localStorage.getItem('weekendEvents')) || [];
-    console.log('Admin: Loading events from localStorage:', events);
     const container = document.getElementById('eventsGrid');
-    if (!container) {
-        console.error('Admin: eventsGrid container not found!');
-        return;
+
+    // Header Stats
+    const statTotal = document.getElementById('statTotalEvents');
+    const statUpcoming = document.getElementById('statUpcomingEvents');
+
+    if (statTotal) statTotal.textContent = events.length;
+    if (statUpcoming) {
+        const today = new Date().toISOString().split('T')[0];
+        statUpcoming.textContent = events.filter(e => e.date >= today).length;
     }
 
+    if (!container) return;
     container.innerHTML = '';
 
     if (events.length === 0) {
-        container.innerHTML = '<p class="text-gray-400 text-center py-4 col-span-full">Hozircha tadbirlar mavjud emas</p>';
+        container.innerHTML = `
+            <div class="col-span-full py-20 bg-card border border-dashed border-themed rounded-[2.5rem] flex flex-col items-center justify-center text-center px-6">
+                <div class="w-24 h-24 bg-purple-50 dark:bg-purple-900/10 rounded-[2rem] flex items-center justify-center text-4xl mb-6 grayscale opacity-30">
+                    <i class="fas fa-calendar-alt text-purple-600"></i>
+                </div>
+                <h4 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Tadbirlar Mavjud Emas</h4>
+                <p class="text-gray-500 text-sm max-w-sm">Maktab hayotini qiziqarli qilish uchun birinchi tadbirni e'lon qiling!</p>
+            </div>
+        `;
         return;
     }
 
-    const icons = {
-        movie: '🎬',
-        concert: '🎵',
-        park: '🌳',
-        mountain: '🏔️',
-        other: '✨'
+    const categoryConfig = {
+        movie: { icon: 'fa-film', label: 'Kino', color: 'from-blue-500 to-indigo-600', glow: 'shadow-blue-500/20' },
+        concert: { icon: 'fa-music', label: 'Konsert', color: 'from-purple-500 to-pink-600', glow: 'shadow-purple-500/20' },
+        park: { icon: 'fa-tree', label: 'Sayohat', color: 'from-emerald-500 to-teal-600', glow: 'shadow-emerald-500/20' },
+        mountain: { icon: 'fa-mountain', label: 'Tog\'', color: 'from-orange-500 to-amber-600', glow: 'shadow-orange-500/20' },
+        other: { icon: 'fa-star', label: 'Boshqa', color: 'from-slate-500 to-slate-700', glow: 'shadow-slate-500/20' }
     };
 
+    // Sort events by date (newest first)
+    events.sort((a, b) => new Date(a.date) - new Date(b.date));
+
     events.forEach(event => {
+        const config = categoryConfig[event.category] || categoryConfig.other;
+        const participantCount = event.participants ? event.participants.length : 0;
+        const eventDate = new Date(event.date);
+        const day = eventDate.getDate();
+        const month = eventDate.toLocaleDateString('uz-UZ', { month: 'short' }).toUpperCase();
+
         const eventCard = `
-            <div class="bg-card border border-themed rounded-xl p-6 shadow-sm card-hover">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-3xl">${icons[event.category] || '✨'}</span>
+            <div class="group relative bg-card border border-themed rounded-[2.5rem] p-8 transition-all duration-300 hover:shadow-2xl ${config.glow} flex flex-col h-full overflow-hidden">
+                <!-- Background Decoration -->
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br ${config.color} opacity-[0.03] group-hover:opacity-10 rounded-full transition-opacity"></div>
+                
+                <!-- Category & Actions -->
+                <div class="flex justify-between items-start mb-8 relative z-10">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${config.color} text-white flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform">
+                            <i class="fas ${config.icon} text-lg"></i>
+                        </div>
                         <div>
-                            <h3 class="text-xl font-semibold">${event.title}</h3>
-                            <p class="text-sm text-muted">${new Date(event.date).toLocaleDateString('uz-UZ', { month: 'long', day: 'numeric', weekday: 'long' })}</p>
+                            <span class="block text-[8px] font-black uppercase tracking-widest text-gray-400">Yo'nalish</span>
+                            <span class="text-xs font-black text-gray-800 dark:text-white uppercase tracking-wider">${config.label}</span>
                         </div>
                     </div>
-                </div>
-                <p class="text-sm text-muted mb-4 line-clamp-2">${event.description || 'Tavsif yo\'q'}</p>
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-medium px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">
-                        ${event.participants ? event.participants.length : 0} kishi qatnashmoqda
-                    </span>
-                    <div class="flex space-x-1">
-                        <button onclick="editEvent(${event.id})" 
-                                class="text-blue-500 hover:text-blue-700 transition-colors p-2">
-                            <i class="fas fa-edit"></i>
+                    <div class="flex gap-2">
+                        <button onclick="editEvent(${event.id})" class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 border border-themed text-gray-400 hover:text-blue-500 hover:border-blue-500/30 transition-all">
+                            <i class="fas fa-edit text-xs"></i>
                         </button>
-                        <button onclick="deleteEvent(${event.id})" 
-                                class="text-red-500 hover:text-red-700 transition-colors p-2">
-                            <i class="fas fa-trash"></i>
+                        <button onclick="deleteEvent(${event.id})" class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 border border-themed text-gray-400 hover:text-rose-500 hover:border-rose-500/30 transition-all">
+                            <i class="fas fa-trash text-xs"></i>
                         </button>
                     </div>
+                </div>
+
+                <!-- Date Ribbon Overlay -->
+                <div class="absolute top-24 right-0 transform translate-x-2">
+                    <div class="bg-card border border-themed rounded-l-2xl py-3 px-4 shadow-xl flex flex-col items-center min-w-[60px]">
+                        <span class="text-2xl font-black text-gray-800 dark:text-white leading-none">${day}</span>
+                        <span class="text-[9px] font-black text-blue-500 uppercase tracking-widest mt-1">${month}</span>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="relative z-10 mb-8 pr-12">
+                    <h3 class="text-xl font-black text-gray-900 dark:text-white mb-3 group-hover:text-purple-600 transition-colors line-clamp-2">${event.title}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-3 leading-relaxed">
+                        ${event.description || 'Tadbir haqida batafsil ma\'lumot berilmagan. Qatnashish uchun ro\'yxatdan o\'ting.'}
+                    </p>
+                </div>
+
+                <!-- Social Proof Footer -->
+                <div class="mt-auto pt-6 border-t border-themed flex items-center justify-between relative z-10">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Ishtirokchilar</span>
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-3">
+                                ${Array(Math.min(3, participantCount)).fill(0).map((_, i) => `
+                                    <div class="w-7 h-7 rounded-full border-2 border-white dark:border-gray-800 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                                        <img src="https://ui-avatars.com/api/?name=P${i}&background=random" class="w-full h-full object-cover">
+                                    </div>
+                                `).join('')}
+                                ${participantCount > 3 ? `<div class="w-7 h-7 rounded-full border-2 border-white dark:border-gray-800 bg-gray-50 flex items-center justify-center text-[8px] font-black text-gray-500">+${participantCount - 3}</div>` : ''}
+                                ${participantCount === 0 ? '<div class="text-[10px] font-bold text-gray-300 italic">Hali hech kim yo\'q</div>' : ''}
+                            </div>
+                            ${participantCount > 0 ? `<span class="text-xs font-black text-purple-600 dark:text-purple-400 ml-1">${participantCount} kishi</span>` : ''}
+                        </div>
+                    </div>
+                    ${participantCount > 10 ? `
+                        <div class="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-500 animate-pulse">
+                            <i class="fas fa-fire-alt text-sm"></i>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
         `;
