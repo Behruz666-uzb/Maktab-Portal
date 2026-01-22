@@ -64,7 +64,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-400">O'quvchilar</p>
-                        <p id="studentCount" class="text-2xl font-bold text-white">0</p>
+                        <p id="studentCount" class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
                     </div>
                     <div class="text-3xl">👨‍🎓</div>
                 </div>
@@ -74,7 +74,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-400">O'rtacha Davomat</p>
-                        <p id="avgAttendance" class="text-2xl font-bold text-white">0%</p>
+                        <p id="avgAttendance" class="text-2xl font-bold text-gray-900 dark:text-white">0%</p>
                     </div>
                     <div class="text-3xl">✅</div>
                 </div>
@@ -84,7 +84,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-400">O'rtacha Baho</p>
-                        <p id="avgGrade" class="text-2xl font-bold text-white">0</p>
+                        <p id="avgGrade" class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
                     </div>
                     <div class="text-3xl">📊</div>
                 </div>
@@ -329,8 +329,8 @@
                                 </div>
                             </div>
                             <button onclick="closeGradeModal()"
-                                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
-                                <i class="fas fa-times text-xl"></i>
+                                class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 transition-all shadow-sm hover:shadow-md">
+                                <i class="fas fa-times text-lg"></i>
                             </button>
                         </div>
                     </div>
@@ -403,7 +403,7 @@
             <div id="homework" class="tab-content hidden">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold">Uy Vazifalari</h2>
-                    <button onclick="openModal('addHomeworkModal')"
+                    <button onclick="openAddHomeworkModal()"
                         class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
                         + Yangi Vazifa
                     </button>
@@ -419,7 +419,7 @@
             <div id="tests" class="tab-content hidden">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold">Testlar</h2>
-                    <button onclick="resetTestModal(); openModal('createTestModal')"
+                    <button onclick="openCreateTestModal()"
                         class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
                         + Yangi Test
                     </button>
@@ -860,57 +860,43 @@
                         placeholder="Vazifa mavzusini kiriting">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Fan</label>
-                    <select id="homeworkSubject"
-                        class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23374151%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] dark:bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_1rem_center] bg-no-repeat">
-                        <option value="algebra" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Algebra
-                        </option>
-                        <option value="geometry" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
-                            Geometriya</option>
-                        <option value="history" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Tarix
-                        </option>
-                        <option value="biology" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
-                            Biologiya</option>
-                        <option value="chemistry" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Kimyo
-                        </option>
-                        <option value="physics" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Fizika
-                        </option>
-                        <option value="english" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Ingliz
-                            tili</option>
-                        <option value="russian" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">Rus
-                            tili</option>
-                        <option value="literature" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
-                            Adabiyot</option>
-                        <option value="informatics" class="bg-white dark:bg-[#0f1729] text-gray-800 dark:text-white">
-                            Informatika</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Tavsif</label>
-                    <textarea id="homeworkDescription" required
-                        class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all min-h-[120px]"
-                        placeholder="Vazifaning batafsil tavsifini yozing..."></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Muddat</label>
-                    <input type="date" id="homeworkDeadline" required
-                        class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer">
-                </div>
-                <div class="flex space-x-4 pt-4">
-                    <button type="button" onclick="closeModal('addHomeworkModal')" class="flex-1">
-                        Bekor Qilish
-                    </button>
-                    <button type="submit" class="flex-1 success">
-                        Yaratish
-                    </button>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Fan</label>
+                        <div class="relative">
+                            <input type="text" id="homeworkSubjectDisplay" readonly
+                                class="w-full bg-gray-50 dark:bg-[#0f1729]/50 border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-500 dark:text-gray-400 font-medium cursor-not-allowed">
+                            <i class="fas fa-lock absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="hidden" id="homeworkSubject">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Tavsif</label>
+                        <textarea id="homeworkDescription" required
+                            class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all min-h-[120px]"
+                            placeholder="Vazifaning batafsil tavsifini yozing..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Muddat</label>
+                        <input type="date" id="homeworkDeadline" required
+                            class="w-full bg-white dark:bg-[#0f1729] border border-gray-200 dark:border-blue-900/40 rounded-lg px-4 py-3 text-gray-800 dark:text-white font-medium shadow-sm hover:shadow-md dark:hover:shadow-blue-900/30 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all cursor-pointer">
+                    </div>
+                    <div class="flex space-x-4 pt-4">
+                        <button type="button" onclick="closeModal('addHomeworkModal')" class="flex-1">
+                            Bekor Qilish
+                        </button>
+                        <button type="submit" class="flex-1 success">
+                            Yaratish
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
+    
 
     <!-- Test Yaratish Modal -->
-    <div id="createTestModal" class="modal-overlay hidden">
-        <div class="modal-content max-w-4xl">
+    <div id="createTestModal" class="modal-overlay ">
+        <div class="modal-content ">
             <h3 class="text-xl font-bold mb-6" id="testModalTitle">Yangi Test Yaratish</h3>
             <form id="createTestForm" class="space-y-6">
                 <input type="hidden" id="editingTestId">

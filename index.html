@@ -109,6 +109,377 @@
             background: rgba(139, 92, 246, 0.1);
             border-color: rgba(139, 92, 246, 0.3);
         }
+
+        /* Identity Selection Styles */
+        .identity-card {
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .identity-card.selected {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+        }
+
+        .identity-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: var(--shadow);
+        }
+
+        .identity-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .identity-card:hover .identity-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* Premium Form Elements Refinement */
+        .reg-field-item label {
+            color: #475569;
+            /* slate-600 for light */
+            transition: var(--transition-smooth);
+        }
+
+        .dark .reg-field-item label {
+            color: #94a3b8;
+            /* slate-400 for dark */
+        }
+
+        .reg-input {
+            background: #ffffff !important;
+            border: 2px solid #e2e8f0 !important;
+            color: #1e293b !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            color-scheme: light;
+        }
+
+        .dark .reg-input {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #ffffff !important;
+            box-shadow: none;
+            color-scheme: dark;
+        }
+
+        .reg-input::placeholder {
+            color: #94a3b8;
+            /* slate-400 */
+        }
+
+        .dark .reg-input::placeholder {
+            color: #475569;
+            /* slate-600 */
+        }
+
+        .identity-card {
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #ffffff;
+            /* pure white for light mode prominence */
+            border: 1px solid #e2e8f0;
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .identity-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .reg-input:focus {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
+        }
+
+        .dark .reg-input:focus {
+            border-color: #06b6d4 !important;
+            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.2), 0 0 20px rgba(6, 182, 212, 0.1) !important;
+        }
+
+        /* Custom Select Arrow */
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+            font-size: 0.75rem;
+            transition: var(--transition-smooth);
+        }
+
+        .select-wrapper:focus-within::after {
+            color: #3b82f6;
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .dark .select-wrapper:focus-within::after {
+            color: #06b6d4;
+        }
+
+        /* Ensure options are legible in both modes */
+        select option {
+            background: #ffffff;
+            color: #1e293b;
+        }
+
+        .dark select option {
+            background: #0f1729;
+            color: #ffffff;
+        }
+
+        .identity-card.selected {
+            border-color: #3b82f6 !important;
+            background: rgba(59, 130, 246, 0.05) !important;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1) !important;
+        }
+
+        .dark .identity-card.selected {
+            border-color: #06b6d4 !important;
+            background: rgba(6, 182, 212, 0.1) !important;
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2) !important;
+        }
+
+        /* Premium Registration Button - Refined */
+        .premium-register-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .premium-register-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        .premium-register-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .dark .premium-register-btn {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .dark .premium-register-btn:hover {
+            box-shadow: 0 6px 16px rgba(6, 182, 212, 0.4);
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+        }
+
+        /* Toggle Button Stylings (Register <-> Login) */
+        .toggle-btn {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            border-radius: 99px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
+        }
+
+        .toggle-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #1e293b;
+            transform: scale(1.05);
+        }
+
+        .dark .toggle-btn {
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+
+        .dark .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #f8fafc;
+        }
+
+        .toggle-btn span {
+            color: #3b82f6;
+            font-weight: 700;
+        }
+
+        .dark .toggle-btn span {
+            color: #06b6d4;
+        }
+
+        /* Back Navigation Button */
+        .back-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            background: rgba(241, 245, 249, 0.5);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .back-nav-btn:hover {
+            color: #1e293b;
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateX(-4px);
+        }
+
+        .dark .back-nav-btn {
+            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .back-nav-btn:hover {
+            color: #f8fafc;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-nav-btn i {
+            font-size: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+
+        .back-nav-btn:hover i {
+            transform: translateX(-2px);
+        }
+
+        .step-transition {
+            transition: all 0.5s ease-in-out;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transform: translateX(-20px);
+            pointer-events: none;
+        }
+
+        .fade-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Advanced Cinematic Animations - "Quantum & Geometric" */
+        @keyframes quantum-rise {
+            0% {
+                opacity: 0;
+                filter: blur(20px);
+                transform: scale(1.05);
+            }
+
+            100% {
+                opacity: 1;
+                filter: blur(0);
+                transform: scale(1);
+            }
+        }
+
+        @keyframes geometric-slit {
+            0% {
+                opacity: 0;
+                transform: scaleY(0);
+                filter: brightness(2);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scaleY(1);
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes slide-up-subtle {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoom-out-fast {
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+
+        .animate-quantum {
+            animation: quantum-rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
+            opacity: 0;
+        }
+
+        .animate-slit {
+            animation: geometric-slit 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+            transform-origin: center;
+            opacity: 0;
+        }
+
+        .animate-slide-subtle {
+            animation: slide-up-subtle 0.5s ease-out forwards !important;
+            opacity: 0;
+        }
+
+        .zoom-exit {
+            animation: zoom-out-fast 0.3s ease forwards !important;
+        }
+
+        .stagger-1 {
+            animation-delay: 0.05s !important;
+        }
+
+        .stagger-2 {
+            animation-delay: 0.1s !important;
+        }
+
+        .stagger-3 {
+            animation-delay: 0.15s !important;
+        }
+
+        .stagger-4 {
+            animation-delay: 0.2s !important;
+        }
+
+        .stagger-5 {
+            animation-delay: 0.25s !important;
+        }
+
+        .animate-pulse {
+            animation: pulse-glow 2s ease-in-out infinite !important;
+        }
+
+        .stagger-4 {
+            animation-delay: 0.4s !important;
+        }
+
+        .stagger-5 {
+            animation-delay: 0.5s !important;
+        }
     </style>
 
 </head>
@@ -122,8 +493,9 @@
 
     <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <!-- Left Side: Welcome and Illustration -->
-        <div class="text-center md:text-left">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4 welcome-title">Maktab Portaliga Xush Kelibsiz!</h1>
+        <div class="text-center md:text-left md:pl-16">
+            <h1 class="text-4xl md:text-6xl font-black mb-6 welcome-title tracking-tighter">Maktab Portaliga Xush
+                Kelibsiz!</h1>
             <p class="text-lg md:text-xl mb-6">Ilm olish, darslar va
                 o'qituvchilar bilan muloqot qilish uchun tizimga kiring yoki ro'yxatdan o'ting. Bizning portal orqali
                 ta'lim jarayonini yanada qiziqarli va samarali qiling!</p>
@@ -136,18 +508,18 @@
             <!-- Login Form -->
             <div id="loginForm" class="transition-all duration-500">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-white dark:text-white mb-2">Tizimga Kirish</h2>
-                    <p class="text-gray-400">Hisobingizga kiring</p>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Tizimga Kirish</h2>
+                    <p class="text-gray-500 dark:text-gray-400">Hisobingizga kiring</p>
                 </div>
 
                 <form id="loginFormElement" class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Login</label>
+                        <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Login</label>
                         <input type="text" id="loginUsername" placeholder="Loginingizni kiriting" required>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Parol</label>
+                        <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Parol</label>
                         <input type="password" id="loginPassword" placeholder="Parolingizni kiriting" required>
                     </div>
 
@@ -157,10 +529,8 @@
                 </form>
 
                 <div class="mt-6 text-center">
-                    <p class="text-gray-400">Hisobingiz yo'qmi?</p>
-                    <button onclick="showRegister()"
-                        class="text-blue-500 hover:text-blue-400 font-semibold transition-colors mt-2">
-                        Ro'yxatdan o'tish
+                    <button onclick="showRegister()" class="toggle-btn">
+                        Hisobingiz yo'qmi? <span>Ro'yxatdan o'tish</span>
                     </button>
                 </div>
 
@@ -174,60 +544,117 @@
             </div>
 
 
-            <!-- Register Form -->
+            <!-- Register Form (Multi-step) -->
             <div id="registerForm" class="hidden transition-all duration-500">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-white dark:text-white mb-2">Ro'yxatdan O'tish</h2>
-                    <p class="text-gray-400">Yangi hisob yarating</p>
+                <!-- Step 1: Identity Selection -->
+                <div id="regStep1" class="step-transition">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">Kim bo'lib
+                            qo'shilasiz?</h2>
+                        <p class="text-gray-400">O'z shaxsingizni tanlang</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div onclick="selectRole('student')" id="roleStudent"
+                            class="identity-card p-6 rounded-2xl cursor-pointer text-center group">
+                            <div class="identity-icon group-hover:drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">👨‍🎓
+                            </div>
+                            <h3 class="font-bold text-gray-900 dark:text-white mb-1">O'quvchi</h3>
+                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">Bilim olish uchun</p>
+                        </div>
+                        <div onclick="selectRole('teacher')" id="roleTeacher"
+                            class="identity-card p-6 rounded-2xl cursor-pointer text-center group">
+                            <div class="identity-icon group-hover:drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]">👨‍🏫
+                            </div>
+                            <h3 class="font-bold text-gray-900 dark:text-white mb-1">O'qituvchi</h3>
+                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">O'rgatish uchun</p>
+                        </div>
+                    </div>
+
+                    <button onclick="nextRegStep()" id="regNextBtn" disabled
+                        class="w-full py-4 rounded-xl bg-gray-700 text-gray-400 font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        Keyingi qadam <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </button>
+
+                    <div class="mt-6 text-center">
+                        <button onclick="showLogin()" class="toggle-btn">
+                            Hisobingiz bormi? <span>Kirish</span>
+                        </button>
+                    </div>
                 </div>
 
-                <form id="registerFormElement" class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Ism Familiya</label>
-                        <input type="text" id="regName" placeholder="Ism familiyangiz" required>
+                <!-- Step 2: Information Entry -->
+                <div id="regStep2" class="step-transition hidden opacity-0">
+                    <div class="mb-8" id="regStep2Header">
+                        <button onclick="prevRegStep()" class="back-nav-btn mb-4">
+                            <i class="fas fa-arrow-left"></i> Orqaga qaytish
+                        </button>
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Ma'lumotlar</h2>
+                        <p class="text-gray-400" id="regStep2Sub">Profil ma'lumotlarini to'ldiring</p>
                     </div>
 
-                    <div>
-                        <label>Login</label>
-                        <input type="text" id="regUsername" placeholder="Loginingiz" required>
-                    </div>
+                    <form id="registerFormElement" class="space-y-5">
+                        <input type="hidden" id="regRole" value="student">
 
-                    <div>
-                        <label>Parol</label>
-                        <input type="password" id="regPassword" placeholder="Parol" required>
-                    </div>
+                        <div class="reg-field-item">
+                            <label class="block text-xs font-black uppercase tracking-widest mb-2">Ism
+                                Familiya</label>
+                            <input type="text" id="regName" placeholder="Toliq Ismingiz" required
+                                class="reg-input w-full rounded-xl px-4 py-3 outline-none transition-all">
+                        </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Rol</label>
-                        <select id="regRole">
-                            <option value="student">O'quvchi</option>
-                            <option value="teacher">O'qituvchi</option>
-                        </select>
-                    </div>
+                        <div class="grid grid-cols-2 gap-4 reg-field-item">
+                            <div>
+                                <label class="block text-xs font-black uppercase tracking-widest mb-2">Login</label>
+                                <input type="text" id="regUsername" placeholder="username" required
+                                    class="reg-input w-full rounded-xl px-4 py-3 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black uppercase tracking-widest mb-2">Parol</label>
+                                <input type="password" id="regPassword" placeholder="******" required
+                                    class="reg-input w-full rounded-xl px-4 py-3 outline-none transition-all">
+                            </div>
+                        </div>
 
-                    <div id="classSelection" class="hidden">
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Sinf</label>
-                        <select id="regClass">
-                            <option value="5a">5-A</option>
-                            <option value="5b">5-B</option>
-                            <option value="6a">6-A</option>
-                            <option value="6b">6-B</option>
-                            <option value="7a">7-A</option>
-                            <option value="7b">7-B</option>
-                        </select>
-                    </div>
+                        <div id="classSelection" class="reg-field-item hidden">
+                            <label class="block text-xs font-black uppercase tracking-widest mb-2">Sinfingiz</label>
+                            <div class="select-wrapper">
+                                <select id="regClass"
+                                    class="reg-input w-full rounded-xl px-4 py-3 outline-none transition-all appearance-none cursor-pointer">
+                                    <option value="5a">5-A Sinf</option>
+                                    <option value="5b">5-B Sinf</option>
+                                    <option value="6a">6-A Sinf</option>
+                                    <option value="6b">6-B Sinf</option>
+                                    <option value="7a">7-A Sinf</option>
+                                    <option value="7b">7-B Sinf</option>
+                                </select>
+                            </div>
+                        </div>
 
-                    <button type="submit" class="w-full success transform hover:scale-105">
-                        Ro'yxatdan o'tish
-                    </button>
-                </form>
+                        <div id="subjectSelection" class="reg-field-item hidden">
+                            <label class="block text-xs font-black uppercase tracking-widest mb-2">Faningiz</label>
+                            <div class="select-wrapper">
+                                <select id="regSubject"
+                                    class="reg-input w-full rounded-xl px-4 py-3 outline-none transition-all appearance-none cursor-pointer">
+                                    <option value="Matematika">Matematika</option>
+                                    <option value="Fizika">Fizika</option>
+                                    <option value="Informatika">Informatika</option>
+                                    <option value="Ona tili">Ona tili</option>
+                                    <option value="Ingliz tili">Ingliz tili</option>
+                                    <option value="Kimyo">Kimyo</option>
+                                    <option value="Biologiya">Biologiya</option>
+                                    <option value="Tarix">Tarix</option>
+                                </select>
+                            </div>
+                        </div>
 
-                <div class="mt-6 text-center">
-                    <p class="text-gray-400">Hisobingiz bormi?</p>
-                    <button onclick="showLogin()"
-                        class="text-blue-500 hover:text-blue-400 font-semibold transition-colors mt-2">
-                        Tizimga kirish
-                    </button>
+                        <div class="reg-field-item">
+                            <button type="submit"
+                                class="premium-register-btn w-full py-4 rounded-xl text-white font-bold uppercase tracking-wide transition-all mt-4">
+                                Ro'yxatdan o'tish
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

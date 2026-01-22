@@ -28,7 +28,16 @@ function loadStudentData() {
     document.getElementById('coinBalance').textContent = user.coins || 0;
     document.getElementById('coinBalanceCard').textContent = user.coins || 0;
 
-    // Profil ma'lumotlari
+    // Profile Header Sections
+    const headerName = document.getElementById('profileHeaderName');
+    const headerClass = document.getElementById('profileHeaderClass');
+    const headerCoins = document.getElementById('profileHeaderCoins');
+
+    if (headerName) headerName.textContent = user.name || '';
+    if (headerClass) headerClass.textContent = getClassName(user.class) || '';
+    if (headerCoins) headerCoins.textContent = user.coins || 0;
+
+    // Profil ma'lumotlari (Inputs & Info)
     document.getElementById('profileName').value = user.name || '';
     document.getElementById('profileUsername').value = user.username || '';
     document.getElementById('profileClass').value = getClassName(user.class) || '';
@@ -39,7 +48,7 @@ function loadStudentData() {
         document.getElementById('profileAvatar').src = user.avatar;
     } else {
         document.getElementById('userAvatar').style.display = 'none';
-        document.getElementById('profileAvatar').style.display = 'none';
+        document.getElementById('profileAvatar').src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) + '&background=3b82f6&color=fff';
     }
 
     // Statistikalarni hisoblash
@@ -64,16 +73,22 @@ function calculateStats(user) {
 
     const averageGrade = count > 0 ? (totalGrade / count).toFixed(1) : '0';
     document.getElementById('averageGrade').textContent = averageGrade;
+    const profileAvgGrade = document.getElementById('profileAvgGrade');
+    if (profileAvgGrade) profileAvgGrade.textContent = averageGrade;
 
     // Davomat
     const attendanceRate = user.attendance && user.attendance.length > 0 ?
         Math.round((user.attendance.filter(a => a.status === 'present').length / user.attendance.length) * 100) : 0;
     document.getElementById('attendanceRate').textContent = attendanceRate + '%';
+    const profileAvgAttendance = document.getElementById('profileAvgAttendance');
+    if (profileAvgAttendance) profileAvgAttendance.textContent = attendanceRate + '%';
 
     // Reyting
     const rankings = calculateRankings();
     const rank = rankings.findIndex(r => r.id === user.id) + 1 || 1;
     document.getElementById('studentRank').textContent = '#' + rank;
+    const headerRank = document.getElementById('profileHeaderRank');
+    if (headerRank) headerRank.textContent = `Reyting: #${rank}`;
 }
 
 function loadTests() {
@@ -193,64 +208,105 @@ function loadVideoLessons() {
     const videoLessons = JSON.parse(localStorage.getItem('videoLessons')) || [];
     const user = getCurrentUser();
     const activeLessons = videoLessons.filter(v => v.class === user.class && v.isActive);
-    const container = document.getElementById('videoLessonsContainer');
-    container.innerHTML = '';
+    const historyLessons = videoLessons.filter(v => v.class === user.class && !v.isActive).sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
 
-    if (activeLessons.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-8">
-                <p class="text-gray-400 text-lg">Hozircha aktiv video darslar mavjud emas</p>
-                <p class="text-gray-500 text-sm mt-2">O'qituvchi video dars boshlaganda bu yerda paydo bo'ladi</p>
-            </div>
-        `;
-        return;
+    const activeContainer = document.getElementById('activeLessonContainer');
+    const historyContainer = document.getElementById('videoLessonsHistoryContainer');
+    const liveBadge = document.getElementById('liveBadge');
+
+    if (!activeContainer || !historyContainer) return;
+
+    activeContainer.innerHTML = '';
+    historyContainer.innerHTML = '';
+
+    // Active Badge handling
+    if (activeLessons.length > 0) {
+        liveBadge.classList.remove('hidden');
+        liveBadge.classList.add('flex');
+    } else {
+        liveBadge.classList.add('hidden');
+        liveBadge.classList.remove('flex');
     }
 
-    activeLessons.forEach(lesson => {
-        const videoLessonCard = `
-            <div class="bg-card border-2 border-green-500 rounded-xl p-6 shadow-lg card-hover">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 class="text-xl font-semibold text-green-600 dark:text-green-400">🎥 ${lesson.title}</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-300">${getSubjectName(lesson.subject)} | ${lesson.teacherName}</p>
-                    </div>
-                    <span class="bg-green-600 px-3 py-1 rounded-full text-sm text-white">
-                        🔴 Jonli
-                    </span>
+    // Render Active Lessons
+    if (activeLessons.length === 0) {
+        activeContainer.innerHTML = `
+            <div class="bg-blue-50/50 dark:bg-blue-900/10 border-2 border-dashed border-blue-200 dark:border-blue-800/50 rounded-[2rem] p-12 text-center">
+                <div class="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                    <i class="fas fa-video-slash text-blue-400 text-2xl"></i>
                 </div>
-                
-                <div class="mb-4">
-                    <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">Dars linki:</p>
-                    <div class="flex space-x-2">
-                        <input type="text" value="${lesson.link}" 
-                               class="flex-1 bg-themed-hover border border-themed rounded-lg px-4 py-2 text-main" readonly>
-                        <button onclick="copyLessonLink('${lesson.link}')" 
-                                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors text-white">
-                            Nusxalash
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Hozircha dars yo'q</h3>
+                <p class="text-gray-500 dark:text-gray-400">O'qituvchingiz dars boshlashi bilan bu yerda paydo bo'ladi</p>
+            </div>
+        `;
+    } else {
+        activeLessons.forEach(lesson => {
+            const card = `
+                <div class="relative group bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2rem] p-8 md:p-10 shadow-2xl overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
+                    <div class="relative flex flex-col md:flex-row items-center gap-8 justify-between">
+                        <div class="text-center md:text-left text-white">
+                            <div class="flex items-center justify-center md:justify-start gap-2 mb-4">
+                                <span class="bg-red-500 text-[10px] font-black uppercase tracking-tighter px-2.5 py-1 rounded-lg">LIVE</span>
+                                <span class="text-blue-100 text-sm font-medium">Boshlangan: ${new Date(lesson.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                            <h3 class="text-3xl md:text-4xl font-black mb-2">${lesson.title}</h3>
+                            <div class="flex flex-wrap justify-center md:justify-start gap-4 mt-6">
+                                <div class="bg-black/20 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10 flex items-center gap-2">
+                                    <i class="fas fa-book-reader text-blue-300"></i>
+                                    <span class="text-sm font-extrabold text-white">${getSubjectName(lesson.subject)}</span>
+                                </div>
+                                <div class="bg-black/20 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10 flex items-center gap-2">
+                                    <i class="fas fa-user-tie text-blue-300"></i>
+                                    <span class="text-sm font-extrabold text-white">${lesson.teacherName}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="joinVideoLesson('${lesson.link}')" 
+                                class="w-full md:w-auto bg-white text-blue-600 px-10 py-5 rounded-2xl font-black shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 group">
+                            <i class="fas fa-play"></i>
+                            Darsga Qo'shilish
                         </button>
                     </div>
                 </div>
+            `;
+            activeContainer.innerHTML += card;
+        });
+    }
 
-                <div class="grid grid-cols-2 gap-4 text-xs text-gray-500 dark:text-gray-300 mb-4">
-                    <div>
-                        <p>📅 Boshlangan: ${new Date(lesson.startTime).toLocaleString()}</p>
-                        <p>👥 Qatnashchilar: ${lesson.participants ? lesson.participants.length : 0}</p>
+    // Render History Lessons
+    if (historyLessons.length === 0) {
+        historyContainer.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400">Darslar tarixi mavjud emas</div>';
+    } else {
+        historyLessons.forEach(lesson => {
+            const date = new Date(lesson.startTime);
+            const duration = lesson.endTime ? Math.round((new Date(lesson.endTime) - date) / 60000) : '?';
+            const historyItem = `
+                <div class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700/50 rounded-2xl p-4 hover:shadow-lg transition-all flex items-center justify-between group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+                            <i class="fas fa-play-circle text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-white">${lesson.title}</h4>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                                <span><i class="far fa-calendar-alt mr-1"></i>${date.toLocaleDateString()}</span>
+                                <span><i class="far fa-clock mr-1"></i>${duration} daqiqa</span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <p>🏫 Sinf: ${getClassName(lesson.class)}</p>
-                        <p>👨‍🏫 O'qituvchi: ${lesson.teacherName}</p>
+                    <div class="flex flex-col items-end gap-1">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${getSubjectName(lesson.subject)}</span>
+                        <div class="flex items-center gap-1 text-[10px] text-gray-500">
+                             <i class="fas fa-users"></i>
+                             <span>${lesson.participants ? lesson.participants.length : 0}</span>
+                        </div>
                     </div>
                 </div>
-
-                <button onclick="joinVideoLesson('${lesson.link}')" 
-                        class="w-full bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold transition-colors text-white flex items-center justify-center space-x-2">
-                    <span>🎥 Video Darsga Qo'shilish</span>
-                </button>
-            </div>
-        `;
-        container.innerHTML += videoLessonCard;
-    });
-
+            `;
+            historyContainer.innerHTML += historyItem;
+        });
+    }
 }
 
 function copyLessonLink(link) {
@@ -368,59 +424,96 @@ function submitTest() {
 }
 
 function loadDiary(user) {
-    // Baholar jadvali
-    const gradesTable = document.getElementById('gradesTable');
-    if (user.grades && Object.keys(user.grades).length > 0) {
-        let tableHtml = `
-            <table class="responsive-table w-full">
-                <thead>
-                    <tr class="bg-card border-b border-themed">
-                        <th class="p-3 text-main">Fan</th>
-                        <th class="p-3 text-main">Baholar</th>
-                        <th class="p-3 text-main">O'rtacha</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-themed">
-        `;
+    // Summary Stats
+    const summaryAvg = document.getElementById('diaryAvgGrade');
+    const summaryAttendance = document.getElementById('diaryAttendance');
+    const summaryRank = document.getElementById('diaryRank');
 
+    // Calculate generic stats if not passed (though loadStudentData should have it)
+    let totalGrade = 0;
+    let count = 0;
+    if (user.grades) {
+        Object.values(user.grades).forEach(sg => {
+            sg.forEach(g => {
+                totalGrade += g;
+                count++;
+            });
+        });
+    }
+    const avg = count > 0 ? (totalGrade / count).toFixed(1) : '0';
+    const attRate = user.attendance && user.attendance.length > 0 ?
+        Math.round((user.attendance.filter(a => a.status === 'present').length / user.attendance.length) * 100) : 0;
+
+    const rankings = calculateRankings();
+    const rank = rankings.findIndex(r => r.id === user.id) + 1 || 1;
+
+    if (summaryAvg) summaryAvg.textContent = avg;
+    if (summaryAttendance) summaryAttendance.textContent = attRate + '%';
+    if (summaryRank) summaryRank.textContent = '#' + rank;
+
+    // Subjects & Grades List
+    const gradesContainer = document.getElementById('gradesTable');
+    if (user.grades && Object.keys(user.grades).length > 0) {
+        let html = '';
         Object.entries(user.grades).forEach(([subject, grades]) => {
-            const average = (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(1);
-            tableHtml += `
-                <tr class="bg-themed-hover transition-colors">
-                    <td class="p-3 text-main">${getSubjectName(subject)}</td>
-                    <td class="p-3 text-gray-600 dark:text-gray-300">${grades.join(', ')}</td>
-                    <td class="p-3 font-semibold grade-${getGradeClass(average)}">${average}</td>
-                </tr>
+            const subjectAvg = (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(1);
+            const subjectIcons = {
+                algebra: 'fa-calculator',
+                geometry: 'fa-shapes',
+                physics: 'fa-atom',
+                chemistry: 'fa-flask',
+                biology: 'fa-leaf',
+                history: 'fa-monument'
+            };
+            const icon = subjectIcons[subject] || 'fa-book';
+
+            html += `
+                <div class="group bg-themed-hover p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:ring-2 hover:ring-blue-500/20">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center text-blue-500 shadow-sm transition-transform group-hover:rotate-12">
+                            <i class="fas ${icon} text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-black text-main text-lg">${getSubjectName(subject)}</h4>
+                            <div class="flex flex-wrap gap-1.5 mt-2">
+                                ${grades.map(g => `<span class="w-7 h-7 flex items-center justify-center rounded-lg text-[10px] font-black border border-themed bg-card grade-${getGradeClass(g)}">${g}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 border-t md:border-t-0 md:border-l border-themed pt-4 md:pt-0 md:pl-6 text-right">
+                         <div>
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">O'rtacha</p>
+                            <span class="text-2xl font-black text-gray-900 dark:text-white">${subjectAvg}</span>
+                         </div>
+                    </div>
+                </div>
             `;
         });
-
-        tableHtml += '</tbody></table>';
-        gradesTable.innerHTML = tableHtml;
+        gradesContainer.innerHTML = html;
     } else {
-        gradesTable.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">Hali baholar mavjud emas</p>';
+        gradesContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Hozircha baholar mavjud emas</p>';
     }
 
 
-    // Davomat kalendari
+    // Attendance Calendar
     const attendanceCalendar = document.getElementById('attendanceCalendar');
     attendanceCalendar.innerHTML = '';
 
     if (user.attendance && user.attendance.length > 0) {
-        user.attendance.forEach((attendance, index) => {
-            const dayElement = document.createElement('div');
-            // Simplified class assignment for theme support
-            let bgClass = 'bg-themed-hover text-gray-500 dark:text-gray-400';
-            if (attendance.status === 'present') bgClass = 'attendance-present text-white';
-            else if (attendance.status === 'absent') bgClass = 'attendance-absent text-white';
-            else if (attendance.status === 'late') bgClass = 'attendance-late text-white';
+        user.attendance.forEach((att, index) => {
+            const day = document.createElement('div');
+            let colorClass = 'bg-themed-hover';
+            if (att.status === 'present') colorClass = 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20';
+            else if (att.status === 'absent') colorClass = 'bg-rose-500 text-white shadow-lg shadow-rose-500/20';
+            else if (att.status === 'late') colorClass = 'bg-amber-500 text-white shadow-lg shadow-amber-500/20';
 
-            dayElement.className = `w-8 h-8 rounded flex items-center justify-center text-xs transition-colors shadow-sm ${bgClass}`;
-            dayElement.textContent = index + 1;
-            dayElement.title = `${attendance.date}: ${getAttendanceStatus(attendance.status)}`;
-            attendanceCalendar.appendChild(dayElement);
+            day.className = `aspect-square rounded-xl flex items-center justify-center text-[10px] font-black transition-transform hover:scale-110 cursor-help ${colorClass}`;
+            day.textContent = index + 1;
+            day.title = `${att.date}: ${getAttendanceStatus(att.status)}`;
+            attendanceCalendar.appendChild(day);
         });
     } else {
-        attendanceCalendar.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">Hali davomat ma\'lumotlari mavjud emas</p>';
+        attendanceCalendar.innerHTML = '<div class="col-span-full py-8 text-center text-gray-400">Ma\'lumot yo\'q</div>';
     }
 
 }
@@ -430,73 +523,143 @@ function loadRankings() {
     const user = getCurrentUser();
     const userClass = user.class;
 
-    // Faqat o'quvchining sinfidagilarni filtrlash
+    // Filter students by current user's class
     const classRankings = rankings.filter(r => r.class === userClass);
-
+    const podiumContainer = document.getElementById('podiumContainer');
     const rankingList = document.getElementById('rankingList');
+    const classLabel = document.getElementById('rankingClassLabel');
+
+    if (!podiumContainer || !rankingList) return;
+    if (classLabel) classLabel.textContent = getClassName(userClass) + ' Sinf';
+
+    podiumContainer.innerHTML = '';
     rankingList.innerHTML = '';
 
     if (classRankings.length === 0) {
-        rankingList.innerHTML = '<p class="text-gray-400 text-center py-4">Hali reyting ma\'lumotlari mavjud emas</p>';
+        rankingList.innerHTML = '<p class="text-gray-400 text-center py-12">Hali reyting ma\'lumotlari mavjud emas</p>';
         return;
     }
 
-    classRankings.forEach((student, index) => {
-        const isCurrentUser = student.id === user.id;
-        const rankCard = `
-            <div class="flex items-center justify-between p-4 rounded-lg border border-themed shadow-sm ${isCurrentUser ? 'bg-blue-600 text-white' : 'bg-card text-main'
-            }">
-                <div class="flex items-center space-x-4">
-                    <div class="w-8 h-8 rounded-full bg-themed-hover flex items-center justify-center font-semibold text-main">
-                        ${index + 1}
+    // Identify Top 3 for Podium
+    const top3 = classRankings.slice(0, 3);
+    const others = classRankings.slice(3);
+
+    // Render Podium
+    const podiumOrder = [1, 0, 2]; // 2nd, 1st, 3rd positions visually
+    podiumOrder.forEach(idx => {
+        const student = top3[idx];
+        if (!student) return;
+
+        const isFirst = idx === 0;
+        const rankColors = isFirst ? 'from-yellow-400 to-amber-600' : (idx === 1 ? 'from-slate-300 to-slate-500' : 'from-orange-400 to-amber-800');
+        const height = isFirst ? 'h-72 md:h-80' : 'h-60 md:h-64';
+
+        const podiumCard = `
+            <div class="relative w-full md:w-64 ${height} bg-gradient-to-b ${rankColors} rounded-[2.5rem] p-6 text-white shadow-2xl flex flex-col items-center justify-end transition-transform hover:scale-105 group">
+                <div class="absolute top-8 flex flex-col items-center">
+                    <div class="relative mb-3">
+                        ${isFirst ? '<div class="absolute -top-10 left-4 -translate-x-1/2 text-4xl animate-bounce drop-shadow-lg z-10">👑</div>' : ''}
+                        <div class="w-20 h-20 rounded-full border-4 border-white overflow-hidden shadow-2xl">
+                            <img src="${student.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(student.name) + '&background=random'}" class="w-full h-full object-cover">
+                        </div>
                     </div>
-                    <div>
-                        <p class="font-semibold">${student.name}</p>
-                        <p class="text-sm ${isCurrentUser ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}">O'rtacha: ${student.averageGrade.toFixed(1)}</p>
-                    </div>
+                    <h4 class="font-black text-center line-clamp-1 px-2">${student.name}</h4>
+                    <span class="text-[10px] font-black uppercase tracking-widest opacity-80">${student.score.toFixed(1)} Bal</span>
                 </div>
-                <div class="text-right">
-                    <p class="font-semibold">${student.score.toFixed(1)} ball</p>
-                    <p class="text-sm ${isCurrentUser ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}">${Math.round(student.attendanceRate)}% davomat</p>
+                <div class="mt-auto w-full py-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 text-center">
+                    <span class="text-3xl font-black">${idx + 1}</span>
+                    <p class="text-[10px] uppercase font-bold tracking-widest opacity-70">O'rin</p>
                 </div>
             </div>
         `;
-        rankingList.innerHTML += rankCard;
+        podiumContainer.innerHTML += podiumCard;
     });
 
+    // Render Others
+    const renderStudentRow = (student, index) => {
+        const isCurrentUser = student.id === user.id;
+        const rank = index + 1;
+        return `
+            <div class="group relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700/50 rounded-2xl p-4 flex items-center justify-between transition-all hover:shadow-xl ${isCurrentUser ? 'ring-2 ring-blue-500 shadow-lg shadow-blue-500/10' : ''}">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-themed-hover flex items-center justify-center font-black text-muted text-sm border border-themed transition-colors group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600">
+                        ${rank}
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                            ${student.name}
+                            ${isCurrentUser ? '<span class="text-[10px] bg-blue-100 dark:bg-blue-900/30 text-blue-600 px-2 py-0.5 rounded-md">SIZ</span>' : ''}
+                        </p>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${student.averageGrade.toFixed(1)} O'rtacha Baho</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-lg font-black text-gray-900 dark:text-white">${student.score.toFixed(1)}</div>
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${Math.round(student.attendanceRate)}% Davomat</div>
+                </div>
+            </div>
+        `;
+    };
+
+    classRankings.forEach((student, index) => {
+        if (index >= 3 || classRankings.length <= 3) {
+            rankingList.innerHTML += renderStudentRow(student, index);
+        }
+    });
 }
 
 function loadShopItems() {
     const shopItems = JSON.parse(localStorage.getItem('shopItems')) || [];
     const user = getCurrentUser();
     const container = document.getElementById('shopItems');
+    const balanceDisplay = document.getElementById('shopCoinBalance');
+
+    if (!container) return;
+    if (balanceDisplay) balanceDisplay.textContent = user.coins || 0;
+
     container.innerHTML = '';
 
     shopItems.forEach(item => {
         const canAfford = user.coins >= item.price;
-        const isOwned = user.purchasedItems && user.purchasedItems.find(p => p.itemId === item.id);
+        const isOwned = user.purchasedItems && user.purchasedItems.some(p => p.itemId === item.id);
+
+        const cardClass = isOwned ? 'ring-2 ring-green-500 shadow-green-500/10' : (canAfford ? 'hover:shadow-xl hover:shadow-blue-500/10' : 'opacity-70');
+        const buttonClass = isOwned
+            ? 'bg-green-500 text-white cursor-default'
+            : (canAfford
+                ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 active:scale-95'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed');
+
         const shopItem = `
-            <div class="shop-item bg-card border ${isOwned ? 'border-green-500' : 'border-themed'} rounded-xl p-6 text-center shadow-sm card-hover ${!isOwned && !canAfford ? 'opacity-50' : ''}">
-                <div class="text-6xl mb-4">${item.image}</div>
-                <h3 class="text-lg font-semibold mb-2 text-main">${item.name}</h3>
-                <p class="text-yellow-600 dark:text-yellow-400 font-bold mb-4 text-xl">${item.price} 🪙</p>
-                ${isOwned ? `
-                    <button class="w-full bg-green-600 py-2 rounded-lg cursor-default text-white">
-                        ✅ Sotib Olingan
-                    </button>
-                ` : `
-                    <button onclick="buyItem(${item.id})" 
-                            class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg transition-colors text-white ${!canAfford ? 'opacity-50 cursor-not-allowed' : ''
-            }"
-                            ${!canAfford ? 'disabled' : ''}>
-                        Sotib Olish
-                    </button>
-                `}
+            <div class="group relative bg-card border border-themed rounded-[2rem] p-8 transition-all duration-300 flex flex-col items-center text-center ${cardClass}">
+                <!-- New/Hot Badges -->
+                <div class="absolute top-4 right-4">
+                    ${item.isNew ? '<span class="bg-blue-500 text-white text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter shadow-lg shadow-blue-500/30">Nadir</span>' : ''}
+                </div>
+
+                <!-- Visual -->
+                <div class="w-32 h-32 bg-themed-hover rounded-3xl flex items-center justify-center text-6xl mb-6 transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-inner">
+                    ${item.image}
+                </div>
+
+                <!-- Info -->
+                <h4 class="text-xl font-black text-gray-800 dark:text-white mb-2 line-clamp-1">${item.name}</h4>
+                <div class="flex items-center gap-1.5 mb-8">
+                    <span class="text-2xl font-black text-yellow-500">${item.price}</span>
+                    <span class="text-xs text-yellow-600 dark:text-yellow-400 mt-1">🪙</span>
+                </div>
+
+                <!-- Action -->
+                <button 
+                    ${isOwned || !canAfford ? 'disabled' : `onclick="buyItem(${item.id})"`}
+                    class="w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${buttonClass}"
+                >
+                    ${isOwned ? '<i class="fas fa-check-circle"></i> Sotib Olingan' : (canAfford ? 'Sotib Olish' : 'Mablag\' Yetarli Emas')}
+                </button>
             </div>
         `;
         container.innerHTML += shopItem;
     });
-
 }
 
 function buyItem(itemId) {
@@ -742,8 +905,9 @@ function filterVideos(subject) {
                         <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
                             ${video.author}
                         </p>
-                        <button class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium transition-colors">
-                            Ko'rish &rarr;
+                        <button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500 transition-all font-bold text-xs uppercase tracking-wider group-hover/btn:translate-x-1">
+                            <i class="fas fa-play text-[10px]"></i>
+                            <span>Ko'rish</span>
                         </button>
                     </div>
                 </div>
@@ -757,7 +921,7 @@ function filterVideos(subject) {
         const isActive = btn.getAttribute('onclick').includes(`'${subject}'`);
 
         // Base classes
-        btn.className = `filter-btn px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 flex items-center space-x-2`;
+        btn.className = `filter-btn px-6 py-3 rounded-2xl text-sm font-extrabold whitespace-nowrap transition-all duration-300 flex items-center gap-2`;
 
         if (isActive) {
             btn.classList.add(
@@ -765,26 +929,39 @@ function filterVideos(subject) {
                 'text-white',
                 'shadow-lg',
                 'shadow-blue-500/30',
-                'transform',
-                'scale-105',
-                'font-semibold',
-                'ring-2',
-                'ring-blue-600',
-                'ring-offset-2',
-                'ring-offset-gray-50',
-                'dark:ring-offset-gray-900'
+                'active-filter'
             );
         } else {
             btn.classList.add(
-                'bg-gray-100',
-                'dark:bg-gray-800',
+                'bg-gray-100/50',
+                'dark:bg-gray-800/50',
                 'text-gray-600',
                 'dark:text-gray-400',
                 'hover:bg-gray-200',
-                'dark:hover:bg-gray-700',
-                'hover:text-gray-900',
-                'dark:hover:text-white'
+                'dark:hover:bg-gray-700'
             );
+        }
+    });
+}
+
+function searchVideos(query) {
+    const q = query.toLowerCase().trim();
+    const container = document.getElementById('videosContainer');
+    if (!container) return;
+
+    // We need to re-filter everything if icons are needed for cards.
+    // Instead of duplicating the entire videos list, we can call filterVideos('all')
+    // but that would reset the search.
+    // Optimal: The videos list should be outside for easy access.
+    // Since it's inside filterVideos, let's just use the current DOM or trigger filter logic.
+
+    const cards = container.querySelectorAll('.group');
+    cards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        if (title.includes(q)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
         }
     });
 }
@@ -878,6 +1055,7 @@ function calculateRankings() {
         id: u.id,
         name: u.name,
         class: u.class,
+        avatar: u.avatar, // Added avatar
         averageGrade: calculateAverageGrade(u.grades),
         attendanceRate: calculateAttendanceRate(u.attendance),
         score: calculateScore(u)
@@ -1045,53 +1223,89 @@ function showTab(tabName) {
 
 function loadEventsForStudent() {
     const events = JSON.parse(localStorage.getItem('weekendEvents')) || [];
-
-    console.log('Student: Loading events from localStorage:', events);
     const container = document.getElementById('studentEventsGrid');
-    if (!container) {
-        console.error('Student: studentEventsGrid container not found!');
-        return;
-    }
+    if (!container) return;
 
     container.innerHTML = '';
 
     if (events.length === 0) {
-        container.innerHTML = '<p class="text-gray-400 text-center py-4 col-span-full">Hozircha tadbirlar mavjud emas</p>';
+        container.innerHTML = `
+            <div class="col-span-full py-20 bg-card border border-dashed border-themed rounded-[2.5rem] flex flex-col items-center justify-center text-center px-6">
+                <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center text-3xl mb-4 grayscale opacity-50">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h4 class="text-xl font-black text-gray-800 dark:text-white mb-2">Hozircha Tadbirlar Yo'q</h4>
+                <p class="text-gray-500 text-sm max-w-xs">Yangi tadbirlar haqida tez orada xabar beramiz. Bizni kuzatib boring!</p>
+            </div>
+        `;
         return;
     }
 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const icons = {
-        movie: '🎬',
-        concert: '🎵',
-        park: '🌳',
-        mountain: '🏔️',
-        other: '✨'
+    const categoryConfig = {
+        movie: { icon: 'fa-film', color: 'text-rose-500', bg: 'bg-rose-500/10', label: 'Kino' },
+        concert: { icon: 'fa-music', color: 'text-purple-500', bg: 'bg-purple-500/10', label: 'Konsert' },
+        park: { icon: 'fa-tree', color: 'text-emerald-500', bg: 'bg-emerald-500/10', label: 'Sayohat' },
+        mountain: { icon: 'fa-mountain', color: 'text-blue-500', bg: 'bg-blue-500/10', label: 'Tog\'' },
+        other: { icon: 'fa-star', color: 'text-amber-500', bg: 'bg-amber-500/10', label: 'Maxsus' }
     };
 
     events.forEach(event => {
         const isJoined = event.participants && event.participants.includes(currentUser.id);
+        const config = categoryConfig[event.category] || categoryConfig.other;
+        const eventDate = new Date(event.date);
+        const day = eventDate.getDate();
+        const month = eventDate.toLocaleDateString('uz-UZ', { month: 'short' }).toUpperCase();
+
         const eventCard = `
-            <div class="card-hover p-4 flex flex-col h-full bg-card border border-themed rounded-xl">
-                <div class="flex items-center space-x-3 mb-3">
-                    <span class="text-3xl">${icons[event.category] || '✨'}</span>
-                    <div class="flex-1">
-                        <h3 class="font-bold text-main">${event.title}</h3>
-                        <p class="text-[10px] text-muted">${new Date(event.date).toLocaleDateString('uz-UZ', { month: 'long', day: 'numeric', weekday: 'long' })}</p>
-                    </div>
+            <div class="group relative bg-card border border-themed rounded-[2.5rem] p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 flex flex-col h-full">
+                <!-- Date Ribbon -->
+                <div class="absolute -top-4 left-8 bg-white dark:bg-gray-800 border border-themed shadow-xl rounded-2xl p-3 flex flex-col items-center min-w-[60px] transform transition-transform group-hover:-translate-y-2">
+                    <span class="text-2xl font-black text-blue-600">${day}</span>
+                    <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">${month}</span>
                 </div>
-                <p class="text-[11px] text-muted mb-4 flex-1 line-clamp-2">${event.description || 'Batafsil ma\'lumot yo\'q'}</p>
-                <div class="flex justify-between items-center mt-auto pt-4 border-t border-themed">
-                    <span class="text-[10px] font-medium px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">
-                        ${event.participants ? event.participants.length : 0} kishi bormoqda
+
+                <!-- Category Badge -->
+                <div class="flex justify-end mb-8">
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl ${config.bg} ${config.color} text-[10px] font-black uppercase tracking-widest">
+                        <i class="fas ${config.icon} text-[8px]"></i>
+                        ${config.label}
                     </span>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1">
+                    <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-3 group-hover:text-blue-600 transition-colors">${event.title}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 line-clamp-3 leading-relaxed">
+                        ${event.description || 'Bu tadbir haqida hozircha batafsil ma\'lumot yo\'q, lekin juda qiziqarli bo\'lishi aniq!'}
+                    </p>
+                </div>
+
+                <!-- Footer Info -->
+                <div class="flex flex-col gap-6 mt-auto pt-6 border-t border-themed">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-2">
+                                <div class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-200"></div>
+                                <div class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-300"></div>
+                            </div>
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-tight">
+                                <span class="text-blue-500">${event.participants ? event.participants.length : 0}</span> kishi bormoqda
+                            </span>
+                        </div>
+                        ${(event.participants && event.participants.length > 5) ? '<i class="fas fa-fire text-orange-500 animate-bounce text-xs"></i>' : ''}
+                    </div>
+
                     <button onclick="joinEvent(${event.id})" 
-                            class="px-3 py-1.5 text-[10px] rounded-lg transition-all ${isJoined ? 'bg-gray-600 cursor-default grayscale opacity-70' : 'primary hover:scale-105'}">
-                        ${isJoined ? "✅ Ro'yxatdan o'tdingiz" : "Bormoqchiman →"}
+                            class="w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${isJoined
+                ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 cursor-default'
+                : 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-95'
+            }">
+                        ${isJoined ? '<i class="fas fa-check-circle"></i> Ro\'yxatdan O\'tdingiz' : 'Ishtirok Etish <i class="fas fa-arrow-right text-[8px]"></i>'}
                     </button>
                 </div>
             </div>
-            `;
+        `;
         container.innerHTML += eventCard;
     });
 }

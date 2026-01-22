@@ -1574,3 +1574,92 @@ loadTeacherData = function () {
     originalLoadTeacherData();
     updateDashboardSchedule();
 }
+
+// Open Add Homework Modal with pre-filled subject
+function openAddHomeworkModal() {
+    const user = getCurrentUser();
+
+    // Set displayed subject name
+    const subjectDisplay = document.getElementById('homeworkSubjectDisplay');
+    if (subjectDisplay) {
+        subjectDisplay.value = getSubjectName(user.subject);
+    }
+
+    // Set hidden value for form submission
+    const subjectInput = document.getElementById('homeworkSubject');
+    console.log(subjectInput);
+
+    if (subjectInput) {
+        subjectInput.value = user.subject;
+    }
+
+    openModal('addHomeworkModal');
+}
+
+// Safe function to open Create Test Modal
+function openCreateTestModal() {
+    // try {
+        const title = document.getElementById('testModalTitle');
+        const editId = document.getElementById('editingTestId');
+        const form = document.getElementById('createTestForm');
+        const container = document.getElementById('testQuestionsContainer');
+
+        if (title) title.textContent = 'Yangi Test Yaratish';
+        if (editId) editId.value = '';
+        if (form) form.reset();
+        if (container) container.innerHTML = '';
+
+        // Auto-lock subject if teacher
+        const user = getCurrentUser();
+        const subjectSelect = document.getElementById('testSubject');
+
+        if (subjectSelect && user && user.role === 'teacher') {
+            subjectSelect.value = user.subject;
+        }
+
+        openModal('createTestModal');
+    // } catch (error) {
+    //     console.error('Error opening test modal:', error);
+    //     alert('Xatolik yuz berdi: ' + error.message);
+    // }
+}
+
+// Redefine editTest to handle potential errors safely
+// We use a function assignment to ensure it overrides any previous definition
+editTest = function (testId) {
+    try {
+        const tests = JSON.parse(localStorage.getItem('tests')) || [];
+        const test = tests.find(t => t.id === testId);
+        if (!test) return;
+
+        const title = document.getElementById('testModalTitle');
+        const editId = document.getElementById('editingTestId');
+        const container = document.getElementById('testQuestionsContainer');
+        const subject = document.getElementById('testSubject');
+        const titleInput = document.getElementById('testTitle');
+
+        if (title) title.textContent = 'Testni Tahrirlash';
+        if (editId) editId.value = testId;
+        if (titleInput) titleInput.value = test.title;
+        if (subject) subject.value = test.subject;
+
+        if (container) {
+            container.innerHTML = '';
+            // Safe safe loading of questions
+            if (test.questions && test.questions.length > 0) {
+                test.questions.forEach(q => {
+                    if (typeof addQuestion === 'function') {
+                        addQuestion(q);
+                    } else {
+                        console.warn('addQuestion function missing');
+                    }
+                });
+            }
+        }
+
+        openModal('createTestModal');
+    } catch (error) {
+        console.error('Error editing test:', error);
+        alert('Tahrirlashda xatolik: ' + error.message);
+    }
+}
