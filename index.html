@@ -480,29 +480,193 @@
         .stagger-5 {
             animation-delay: 0.5s !important;
         }
+
+        /* ===== Landing Dashboard + Top Navbar ===== */
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 90;
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            background: rgba(248, 250, 252, 0.75);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .dark .top-nav { background: rgba(10, 10, 15, 0.7); }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0.75rem 1rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+        }
+        .brand { display: flex; align-items: center; gap: 0.6rem; font-weight: 800; font-size: 1.15rem; color: var(--text-main); cursor: pointer; background: none; box-shadow: none; padding: 0; min-height: auto; text-transform: none; letter-spacing: -0.01em; }
+        .brand:hover { transform: none; box-shadow: none; }
+        .brand-logo { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, #3b82f6, #8b5cf6); font-size: 1rem; }
+        .nav-actions { display: flex; align-items: center; gap: 0.5rem; }
+        .nav-icon-btn { width: 42px; height: 42px; min-height: 42px; padding: 0; border-radius: 12px; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: none; }
+        .nav-btn { min-height: 42px; padding: 0.55rem 1.1rem; border-radius: 12px; text-transform: none; letter-spacing: 0; font-size: 0.9rem; box-shadow: none; }
+        .nav-btn-ghost { background: transparent; color: var(--text-main); border: 1px solid var(--border-color); }
+        .nav-btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+        .nav-btn-primary { color: #fff; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .dark .nav-btn-primary { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+        .nav-btn.active { outline: 2px solid var(--primary); outline-offset: 2px; }
+        @media (max-width: 480px) { .brand-text { display: none; } .nav-btn { padding: 0.5rem 0.8rem; font-size: 0.8rem; } }
+
+        .page-main { padding-top: 84px; min-height: 100vh; }
+        .dash-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+        .dash-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 18px; box-shadow: var(--shadow);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            transition: transform .3s ease, border-color .3s ease;
+        }
+        .dash-card:hover { transform: translateY(-4px); border-color: rgba(59,130,246,.4); }
+        .stat-icon { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; font-size: 1.1rem; }
+        .stat-value { font-size: 1.9rem; font-weight: 800; line-height: 1; color: var(--text-main); font-variant-numeric: tabular-nums; }
+        .muted { color: var(--text-muted); }
+        .section-title { font-size: 1.5rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em; }
+        .feature-icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-size: 1.3rem; margin-bottom: 1rem; }
+        .cta-box { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; border-radius: 22px; }
+        .cta-box .nav-btn-ghost { color: #fff; border-color: rgba(255,255,255,.5); }
+        .cta-box .nav-btn-ghost:hover { background: rgba(255,255,255,.12); color: #fff; border-color: #fff; }
+        .cta-box .nav-btn-white { background: #fff; color: #1e3a8a; }
+        .view-enter { animation: slide-up-subtle .45s ease-out both; }
+        .stat-icon i, .feature-icon i, .brand-logo i, .nav-btn-primary i, .cta-box i { color: inherit !important; }
+        .nav-icon-btn .theme-sun { display: none; }
+        .dark .nav-icon-btn .theme-moon { display: none; }
+        .dark .nav-icon-btn .theme-sun { display: inline-block; }
+        .auth-view { min-height: calc(100vh - 84px); display: flex; align-items: center; padding: 1.5rem 0 3rem; }
     </style>
 
 </head>
 
-<body class="min-h-screen centered-layout">
-    <!-- Theme Toggle -->
-    <button onclick="toggleDarkMode()" class="theme-toggle" title="Mavzuni o'zgartirish">
-        <i class="fas fa-moon dark:hidden"></i>
-        <i class="fas fa-sun hidden dark:inline"></i>
-    </button>
-
-    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <!-- Left Side: Welcome and Illustration -->
-        <div class="text-center md:text-left md:pl-16">
-            <h1 class="text-4xl md:text-6xl font-black mb-6 welcome-title tracking-tighter">Maktab Portaliga Xush
-                Kelibsiz!</h1>
-            <p class="text-lg md:text-xl mb-6">Ilm olish, darslar va
-                o'qituvchilar bilan muloqot qilish uchun tizimga kiring yoki ro'yxatdan o'ting. Bizning portal orqali
-                ta'lim jarayonini yanada qiziqarli va samarali qiling!</p>
-            <img src="./Assets/81db2a10-2f75-4ea2-85fb-09472b824dd0.png "
-                class="illustration mx-auto md:mx-0 rounded-lg shadow-xl">
+<body class="min-h-screen">
+    <!-- Top Navbar -->
+    <header class="top-nav">
+        <div class="nav-inner">
+            <button type="button" class="brand" onclick="showDashboard()" aria-label="Bosh sahifa">
+                <span class="brand-logo"><i class="fas fa-graduation-cap"></i></span>
+                <span class="brand-text">Maktab Portali</span>
+            </button>
+            <div class="nav-actions">
+                <button onclick="toggleDarkMode()" class="nav-icon-btn" title="Mavzuni o'zgartirish">
+                    <i class="fas fa-moon theme-moon"></i>
+                    <i class="fas fa-sun theme-sun"></i>
+                </button>
+                <button id="navSignIn" type="button" class="nav-btn nav-btn-ghost" onclick="openAuth('login')">Sign In</button>
+                <button id="navSignUp" type="button" class="nav-btn nav-btn-primary" onclick="openAuth('register')">Sign Up</button>
+            </div>
         </div>
+    </header>
 
+    <main class="page-main">
+        <!-- ===== Dashboard (default view) ===== -->
+        <section id="dashboardView" class="view-enter">
+            <div class="dash-wrap">
+                <!-- Hero -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-12">
+                    <div class="text-center md:text-left">
+                        <h1 class="text-4xl md:text-6xl font-black mb-6 welcome-title tracking-tighter">Maktab Portaliga Xush Kelibsiz!</h1>
+                        <p class="text-lg md:text-xl mb-8 muted">Ilm olish, darslar va o'qituvchilar bilan muloqot qilish uchun yagona platforma. Ta'lim jarayonini yanada qiziqarli va samarali qiling!</p>
+                        <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+                            <button type="button" class="nav-btn nav-btn-primary" onclick="openAuth('register')"><i class="fas fa-user-plus"></i> Boshlash</button>
+                            <button type="button" class="nav-btn nav-btn-ghost" onclick="openAuth('login')"><i class="fas fa-right-to-bracket"></i> Hisobga kirish</button>
+                        </div>
+                    </div>
+                    <div>
+                        <img src="./Assets/81db2a10-2f75-4ea2-85fb-09472b824dd0.png" alt="Maktab portali" class="illustration mx-auto rounded-lg shadow-xl">
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+                    <div class="dash-card p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="muted text-sm font-semibold">O'quvchilar</span>
+                            <span class="stat-icon" style="background:rgba(6,182,212,.12);color:#06b6d4"><i class="fas fa-user-graduate"></i></span>
+                        </div>
+                        <div class="stat-value" id="statStudents">0</div>
+                    </div>
+                    <div class="dash-card p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="muted text-sm font-semibold">O'qituvchilar</span>
+                            <span class="stat-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6"><i class="fas fa-chalkboard-user"></i></span>
+                        </div>
+                        <div class="stat-value" id="statTeachers">0</div>
+                    </div>
+                    <div class="dash-card p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="muted text-sm font-semibold">Sinflar</span>
+                            <span class="stat-icon" style="background:rgba(59,130,246,.12);color:#3b82f6"><i class="fas fa-school"></i></span>
+                        </div>
+                        <div class="stat-value" id="statClasses">0</div>
+                    </div>
+                    <div class="dash-card p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="muted text-sm font-semibold">Testlar</span>
+                            <span class="stat-icon" style="background:rgba(244,114,182,.12);color:#f472b6"><i class="fas fa-clipboard-check"></i></span>
+                        </div>
+                        <div class="stat-value" id="statTests">0</div>
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="mb-6 text-center md:text-left">
+                    <h2 class="section-title">Portal imkoniyatlari</h2>
+                    <p class="muted mt-1">Hamma narsa bir joyda — o'quvchi, o'qituvchi va ma'muriyat uchun</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+                    <div class="dash-card p-6">
+                        <div class="feature-icon" style="background:rgba(59,130,246,.12);color:#3b82f6"><i class="fas fa-clipboard-list"></i></div>
+                        <h3 class="font-bold text-lg mb-1">Onlayn testlar</h3>
+                        <p class="muted text-sm">Testlarni topshiring va natijalarni darhol ko'ring.</p>
+                    </div>
+                    <div class="dash-card p-6">
+                        <div class="feature-icon" style="background:rgba(139,92,246,.12);color:#8b5cf6"><i class="fas fa-book-open"></i></div>
+                        <h3 class="font-bold text-lg mb-1">Uy vazifalari</h3>
+                        <p class="muted text-sm">Vazifalar va muddatlarni bitta joyda kuzating.</p>
+                    </div>
+                    <div class="dash-card p-6">
+                        <div class="feature-icon" style="background:rgba(6,182,212,.12);color:#06b6d4"><i class="fas fa-circle-play"></i></div>
+                        <h3 class="font-bold text-lg mb-1">Video darslar</h3>
+                        <p class="muted text-sm">O'qituvchilar yuklagan darslarni istalgan vaqtda tomosha qiling.</p>
+                    </div>
+                    <div class="dash-card p-6">
+                        <div class="feature-icon" style="background:rgba(16,185,129,.12);color:#10b981"><i class="fas fa-ranking-star"></i></div>
+                        <h3 class="font-bold text-lg mb-1">Reyting</h3>
+                        <p class="muted text-sm">Natijalaringiz asosida sinf va maktab reytingida o'rningizni ko'ring.</p>
+                    </div>
+                    <div class="dash-card p-6">
+                        <div class="feature-icon" style="background:rgba(244,114,182,.12);color:#f472b6"><i class="fas fa-store"></i></div>
+                        <h3 class="font-bold text-lg mb-1">Mukofotlar do'koni</h3>
+                        <p class="muted text-sm">To'plangan ballarni sovg'alarga almashtiring.</p>
+                    </div>
+                    <div class="dash-card p-6">
+                        <div class="feature-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><i class="fas fa-calendar-days"></i></div>
+                        <h3 class="font-bold text-lg mb-1">Tadbirlar</h3>
+                        <p class="muted text-sm">Dam olish kunlari tadbirlari va maktab yangiliklari.</p>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="cta-box p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-extrabold mb-2">Hoziroq qo'shiling</h2>
+                        <p class="opacity-90">O'quvchi yoki o'qituvchi sifatida bir daqiqada ro'yxatdan o'ting.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3 justify-center">
+                        <button type="button" class="nav-btn nav-btn-white" onclick="openAuth('register')">Sign Up</button>
+                        <button type="button" class="nav-btn nav-btn-ghost" onclick="openAuth('login')">Sign In</button>
+                    </div>
+                </div>
+
+                <p class="text-center muted text-sm mt-10">© <span id="yearNow"></span> Maktab Portali</p>
+            </div>
+        </section>
+
+        <!-- ===== Auth (Sign In / Sign Up) ===== -->
+        <section id="authView" class="hidden">
+            <div class="auth-view">
+                <div class="container mx-auto px-4">
+                    <div class="max-w-md mx-auto mb-4">
+                        <button type="button" onclick="showDashboard()" class="back-nav-btn">
+                            <i class="fas fa-arrow-left"></i> Bosh sahifaga qaytish
+                        </button>
+                    </div>
         <!-- Right Side: Forms -->
         <div class="form-container max-w-md mx-auto rounded-xl shadow-2xl p-10 hover-glow">
             <!-- Login Form -->
@@ -659,9 +823,79 @@
             </div>
 
         </div>
-    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
+    <script>
+        // ===== Landing dashboard navigatsiyasi =====
+        function setActiveNav(mode) {
+            document.getElementById('navSignIn').classList.toggle('active', mode === 'login');
+            document.getElementById('navSignUp').classList.toggle('active', mode === 'register');
+        }
+
+        function showDashboard(skipHash) {
+            document.getElementById('authView').classList.add('hidden');
+            const dash = document.getElementById('dashboardView');
+            dash.classList.remove('hidden');
+            dash.classList.remove('view-enter'); void dash.offsetWidth; dash.classList.add('view-enter');
+            setActiveNav(null);
+            if (!skipHash && location.hash) history.pushState(null, '', location.pathname + location.search);
+            window.scrollTo({ top: 0 });
+        }
+
+        function openAuth(mode, skipHash) {
+            document.getElementById('dashboardView').classList.add('hidden');
+            const auth = document.getElementById('authView');
+            auth.classList.remove('hidden');
+            auth.classList.remove('view-enter'); void auth.offsetWidth; auth.classList.add('view-enter');
+            if (mode === 'register') {
+                showRegister();
+            } else {
+                showLogin();
+            }
+            setActiveNav(mode);
+            if (!skipHash && location.hash !== '#' + mode) history.pushState(null, '', '#' + mode);
+            window.scrollTo({ top: 0 });
+        }
+
+        // Form ichidagi "Kirish" / "Ro'yxatdan o'tish" almashinuvida navbar holatini yangilash
+        (function () {
+            const _showLogin = showLogin, _showRegister = showRegister;
+            showLogin = function () { _showLogin(); setActiveNav('login'); };
+            showRegister = function () { _showRegister(); setActiveNav('register'); };
+        })();
+
+        function routeFromHash() {
+            const h = location.hash.replace('#', '');
+            if (h === 'login' || h === 'register') openAuth(h, true);
+            else showDashboard(true);
+        }
+        window.addEventListener('popstate', routeFromHash);
+
+        function animateCount(el, target) {
+            const dur = 900, t0 = performance.now();
+            (function step(t) {
+                const k = Math.min(1, (t - t0) / dur);
+                el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+                if (k < 1) requestAnimationFrame(step);
+            })(t0);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+            const allClasses = JSON.parse(localStorage.getItem('classes')) || [];
+            const allTests = JSON.parse(localStorage.getItem('tests')) || [];
+            animateCount(document.getElementById('statStudents'), allUsers.filter(u => u.role === 'student').length);
+            animateCount(document.getElementById('statTeachers'), allUsers.filter(u => u.role === 'teacher').length);
+            animateCount(document.getElementById('statClasses'), allClasses.length);
+            animateCount(document.getElementById('statTests'), allTests.length);
+            document.getElementById('yearNow').textContent = new Date().getFullYear();
+            routeFromHash();
+        });
+    </script>
 </body>
 
 </html>
